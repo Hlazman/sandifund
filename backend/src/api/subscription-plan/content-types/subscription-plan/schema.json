@@ -1,0 +1,92 @@
+{
+  "kind": "collectionType",
+  "collectionName": "subscription_plans",
+  "info": {
+    "singularName": "subscription-plan",
+    "pluralName": "subscription-plans",
+    "displayName": "SubscriptionPlan"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "amount": {
+      "type": "decimal",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "default": 0,
+      "min": 0
+    },
+    "currency": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "description": {
+      "type": "blocks",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "maxFunds": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "default": 0,
+      "min": 0
+    },
+    "isActive": {
+      "type": "boolean",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "default": true
+    },
+    "donationPercent": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "default": 0,
+      "min": 0
+    },
+    "duration": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "default": 0,
+      "min": 0
+    }
+  }
+}

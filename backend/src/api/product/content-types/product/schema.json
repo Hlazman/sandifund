@@ -1,0 +1,98 @@
+{
+  "kind": "collectionType",
+  "collectionName": "products",
+  "info": {
+    "singularName": "product",
+    "pluralName": "products",
+    "displayName": "Product"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "image": {
+      "type": "media",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "description": {
+      "type": "blocks",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "price": {
+      "type": "decimal",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "min": 0
+    },
+    "donationPercent": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "min": 0
+    },
+    "sold": {
+      "type": "boolean",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "default": false
+    },
+    "master": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::master.master",
+      "inversedBy": "products"
+    },
+    "funds": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::fund.fund",
+      "inversedBy": "products"
+    },
+    "users": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "products"
+    },
+    "purchasedBy": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user",
+      "mappedBy": "purchasedProducts"
+    }
+  }
+}

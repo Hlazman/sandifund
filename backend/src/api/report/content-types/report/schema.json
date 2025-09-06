@@ -1,0 +1,61 @@
+{
+  "kind": "collectionType",
+  "collectionName": "reports",
+  "info": {
+    "singularName": "report",
+    "pluralName": "reports",
+    "displayName": "Report"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "description": {
+      "type": "blocks",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "sum": {
+      "type": "decimal",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "pdf": {
+      "type": "media",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "multiple": false,
+      "allowedTypes": [
+        "files"
+      ]
+    },
+    "fund": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::fund.fund",
+      "inversedBy": "reports"
+    }
+  }
+}
