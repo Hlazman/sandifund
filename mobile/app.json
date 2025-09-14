@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "mobile",
+    "slug": "mobile",
+    "scheme": "sandifund",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.sandifund.app"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "91c73433-eabb-4cdd-a8fb-279e236c1fc9"
+      }
+    }
+  }
+}
