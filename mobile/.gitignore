@@ -20,4 +20,4 @@ ios/
 .vscode/
 .metro-health-check*
 
-mobile/sandifund-upload-keystore.jks
+sandifund-upload-keystore.jks
