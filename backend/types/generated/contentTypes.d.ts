@@ -517,6 +517,31 @@ export interface ApiFundFund extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiJsonJson extends Struct.SingleTypeSchema {
+  collectionName: 'jsons';
+  info: {
+    displayName: 'JSON';
+    pluralName: 'jsons';
+    singularName: 'json';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    data: Schema.Attribute.JSON;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::json.json'> &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiMasterMaster extends Struct.CollectionTypeSchema {
   collectionName: 'masters';
   info: {
@@ -1298,34 +1323,6 @@ export interface ApiTransactionTransaction extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiTranslationTranslation extends Struct.SingleTypeSchema {
-  collectionName: 'translations';
-  info: {
-    displayName: 'Translation';
-    pluralName: 'translations';
-    singularName: 'translation';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    json: Schema.Attribute.JSON;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::translation.translation'
-    > &
-      Schema.Attribute.Private;
-    publishedAt: Schema.Attribute.DateTime;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
 export interface PluginContentReleasesRelease
   extends Struct.CollectionTypeSchema {
   collectionName: 'strapi_releases';
@@ -1871,6 +1868,7 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::faq.faq': ApiFaqFaq;
       'api::fund.fund': ApiFundFund;
+      'api::json.json': ApiJsonJson;
       'api::master.master': ApiMasterMaster;
       'api::notification.notification': ApiNotificationNotification;
       'api::order.order': ApiOrderOrder;
@@ -1882,7 +1880,6 @@ declare module '@strapi/strapi' {
       'api::subscription-plan.subscription-plan': ApiSubscriptionPlanSubscriptionPlan;
       'api::subscription.subscription': ApiSubscriptionSubscription;
       'api::transaction.transaction': ApiTransactionTransaction;
-      'api::translation.translation': ApiTranslationTranslation;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;
