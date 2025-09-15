@@ -517,31 +517,6 @@ export interface ApiFundFund extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiJsonJson extends Struct.SingleTypeSchema {
-  collectionName: 'jsons';
-  info: {
-    displayName: 'JSON';
-    pluralName: 'jsons';
-    singularName: 'json';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    data: Schema.Attribute.JSON;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::json.json'> &
-      Schema.Attribute.Private;
-    publishedAt: Schema.Attribute.DateTime;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
 export interface ApiMasterMaster extends Struct.CollectionTypeSchema {
   collectionName: 'masters';
   info: {
@@ -790,6 +765,43 @@ export interface ApiPaymentMethodPaymentMethod
       }>;
     publishedAt: Schema.Attribute.DateTime;
     title: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPrivacyPolicyPrivacyPolicy extends Struct.SingleTypeSchema {
+  collectionName: 'privacy_policies';
+  info: {
+    displayName: 'PrivacyPolicy';
+    pluralName: 'privacy-policies';
+    singularName: 'privacy-policy';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::privacy-policy.privacy-policy'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    text: Schema.Attribute.Blocks &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -1222,6 +1234,43 @@ export interface ApiSubscriptionSubscription
       'manyToOne',
       'plugin::users-permissions.user'
     >;
+  };
+}
+
+export interface ApiTermsOfUseTermsOfUse extends Struct.SingleTypeSchema {
+  collectionName: 'terms_of_uses';
+  info: {
+    displayName: 'TermsOfUse';
+    pluralName: 'terms-of-uses';
+    singularName: 'terms-of-use';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::terms-of-use.terms-of-use'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    text: Schema.Attribute.Blocks &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -1868,17 +1917,18 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::faq.faq': ApiFaqFaq;
       'api::fund.fund': ApiFundFund;
-      'api::json.json': ApiJsonJson;
       'api::master.master': ApiMasterMaster;
       'api::notification.notification': ApiNotificationNotification;
       'api::order.order': ApiOrderOrder;
       'api::payment-method.payment-method': ApiPaymentMethodPaymentMethod;
+      'api::privacy-policy.privacy-policy': ApiPrivacyPolicyPrivacyPolicy;
       'api::product.product': ApiProductProduct;
       'api::report.report': ApiReportReport;
       'api::sticker-pack.sticker-pack': ApiStickerPackStickerPack;
       'api::sticker.sticker': ApiStickerSticker;
       'api::subscription-plan.subscription-plan': ApiSubscriptionPlanSubscriptionPlan;
       'api::subscription.subscription': ApiSubscriptionSubscription;
+      'api::terms-of-use.terms-of-use': ApiTermsOfUseTermsOfUse;
       'api::transaction.transaction': ApiTransactionTransaction;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
