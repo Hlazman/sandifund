@@ -1,4 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
+// import {
+//   View,
+//   Text,
+//   Image,
+//   TouchableOpacity,
+//   Modal,
+//   Pressable,
+//   ScrollView,
+//   StyleSheet,
+//   Animated,
+//   Easing,
+// } from "react-native";
 import {
   View,
   Text,
@@ -10,6 +22,7 @@ import {
   StyleSheet,
   Animated,
   Easing,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context"; // ✅ правильный SafeAreaView
 import { Ionicons } from "@expo/vector-icons";
@@ -37,7 +50,9 @@ export default function Header({ navigation }) {
       toValue: open ? 0 : 1,
       duration: open ? 280 : 240,
       easing: open ? Easing.out(Easing.cubic) : Easing.in(Easing.cubic),
-      useNativeDriver: true,
+      // useNativeDriver: true,
+      // на web нативного модуля нет → убираем ворнинг
+      useNativeDriver: Platform.OS !== "web",
     }).start();
   }, [open, slide]);
 
@@ -73,7 +88,7 @@ export default function Header({ navigation }) {
       {/* Меню */}
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
         {/* Контейнер, не блокирующий события детям (панели) */}
-        <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
+         <View style={[StyleSheet.absoluteFill, { pointerEvents: "box-none" }]}>
           {/* Оверлей ПОД панелью (zIndex:1). Нажатие по фону закрывает меню */}
           <Pressable style={[StyleSheet.absoluteFill, { zIndex: 1 }]} onPress={() => setOpen(false)}>
             <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.35)" }} />
@@ -140,10 +155,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderLeftWidth: 1,
     borderLeftColor: "#e5e7eb",
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 8,
+    // shadowColor: "#000",
+    // shadowOpacity: 0.15,
+    // shadowRadius: 12,
+    // elevation: 8,
+    ...(Platform.OS === "web"
+      ? { boxShadow: "0px 12px 24px rgba(0,0,0,0.15)" }
+      : { shadowColor: "#000", shadowOpacity: 0.15, shadowRadius: 12, elevation: 8 }),
   },
   drawerInner: { flex: 1 },
   drawerHeader: {
