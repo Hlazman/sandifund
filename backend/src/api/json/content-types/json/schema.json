@@ -1,17 +1,17 @@
 {
   "kind": "singleType",
-  "collectionName": "translations",
+  "collectionName": "jsons",
   "info": {
-    "singularName": "translation",
-    "pluralName": "translations",
-    "displayName": "Translation"
+    "singularName": "json",
+    "pluralName": "jsons",
+    "displayName": "JSON"
   },
   "options": {
     "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
-    "json": {
+    "data": {
       "type": "json"
     }
   }
