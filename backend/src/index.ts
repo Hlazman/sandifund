@@ -7,7 +7,36 @@ export default {
    *
    * This gives you an opportunity to extend code.
    */
-  register(/* { strapi }: { strapi: Core.Strapi } */) {},
+  register({ strapi }) {
+    const extensionService = strapi.plugin('graphql').service('extension');
+
+    extensionService.use(() => ({
+      typeDefs: /* GraphQL */ `
+        extend type Query {
+          meFull: UsersPermissionsUser
+        }
+      `,
+      resolvers: {
+        Query: {
+          meFull: {
+            resolve: async (parent, args, ctx) => {
+              if (!ctx.state.user) return null;
+              // Populate all relations and fields
+              const user = await strapi.entityService.findOne(
+                'plugin::users-permissions.user',
+                ctx.state.user.id,
+                { populate: '*' }
+              );
+              return user;
+            },
+          },
+        },
+      },
+      resolversConfig: {
+        'Query.meFull': { auth: true },
+      },
+    }));
+  },
 
   /**
    * An asynchronous bootstrap function that runs before
