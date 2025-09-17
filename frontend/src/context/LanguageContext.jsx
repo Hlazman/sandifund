@@ -1,19 +1,14 @@
 import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  useCallback,
+  createContext, useContext, useEffect, useMemo, useState, useCallback,
 } from "react";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client/react";
-import { GET_TRANSLATIONS, GET_ME } from "../api/get";
-import { UPDATE_USER_LANGUAGE } from "../api/mutations";
+import { GET_TRANSLATIONS, GET_MY_USER_INFO } from "../api/get";
+import { UPDATE_USER_INFO, LOGIN } from "../api/mutations";
 
 const LANGS = [
-  { code: "en", label: "English", flag: "🇺🇸", dir: "ltr" },
-  { code: "ru", label: "Русский", flag: "🇷🇺", dir: "ltr" },
-  { code: "he", label: "עברית",  flag: "🇮🇱", dir: "rtl" },
+  { code: "en", label: "English", dir: "ltr" },
+  { code: "ru", label: "Русский", dir: "ltr" },
+  { code: "he", label: "עברית",  dir: "rtl" },
 ];
 
 const LanguageCtx = createContext(null);
@@ -29,65 +24,103 @@ function pick(obj, path) {
 }
 
 export function LanguageProvider({ children }) {
+  // локаль: читаем из localStorage для мгновенного старта (перезапишем серверной)
   const [locale, setLocaleState] = useState(localStorage.getItem("sf_lang") || "en");
-  const [userId, setUserId] = useState(null);
   const [savingLanguage, setSavingLanguage] = useState(false);
 
-  // 1) Переводы → JSON
+  // documentId сущности UserInfo
+  const [userInfoId, setUserInfoId] = useState(localStorage.getItem("sf_userInfoId") || null);
+
+  // Переводы
   const { data: trData } = useQuery(GET_TRANSLATIONS, { fetchPolicy: "cache-first" });
-  const translations = useMemo(
-    () => trData?.translation?.data ?? {},
-    [trData]
-  );
+  const translations = useMemo(() => trData?.translation?.data ?? {}, [trData]);
 
-  // 2) me
-  const [fetchMe] = useLazyQuery(GET_ME, { fetchPolicy: "network-only" });
-  const refreshMe = useCallback(async () => {
-    if (!localStorage.getItem("sf_jwt")) return null;
-    const res = await fetchMe();
-    const me = res?.data?.me;
-    if (me?.id) {
-      setUserId(me.id);
-      if (!localStorage.getItem("sf_lang") && me.language) {
-        setLocaleState(me.language);
-        localStorage.setItem("sf_lang", me.language);
+  // Чтение своих данных (user_info) — единственный авторитетный источник языка
+  const [fetchMyUserInfo] = useLazyQuery(GET_MY_USER_INFO, { fetchPolicy: "network-only" });
+
+  // Обновление языка на бэке
+  const [updateUserInfo] = useMutation(UPDATE_USER_INFO);
+
+  // (опционально) демо-логин — оставлен, если ты используешь автологин
+  const [login] = useMutation(LOGIN, {
+    onCompleted: async ({ login }) => {
+      if (login?.jwt) {
+        localStorage.setItem("sf_jwt", login.jwt);
+        await bootstrap(); // после логина сразу подтянем user_info + язык
       }
+    },
+  });
+
+  // Источник правды: тянем meFull→user_info и синхронизируем локаль
+  const bootstrap = useCallback(async () => {
+    try {
+      const res = await fetchMyUserInfo();
+      const ui = res?.data?.meFull?.user_info || null;
+
+      if (ui?.documentId) {
+        setUserInfoId(ui.documentId);
+        localStorage.setItem("sf_userInfoId", ui.documentId);
+      }
+
+      if (ui?.language) {
+        // Сервер главнее: перезаписываем локаль и localStorage
+        if (ui.language !== locale) {
+          setLocaleState(ui.language);
+          localStorage.setItem("sf_lang", ui.language);
+        }
+      }
+    } catch {
+      // молчим: если нет прав/резолвера — локальная локаль продолжит работать
     }
-    return me;
-  }, [fetchMe]);
+  }, [fetchMyUserInfo, locale]);
 
+  // Один раз при монтировании — тянем authoritative язык
   useEffect(() => {
-    refreshMe().catch(() => {});
-  }, [refreshMe]);
+    bootstrap().catch(() => {});
+  }, [bootstrap]);
 
-  // 3) Обновление языка
-  const [updateLanguage] = useMutation(UPDATE_USER_LANGUAGE);
+  // Проставляем dir на html
+  useEffect(() => {
+    document.documentElement.setAttribute("dir", locale === "he" ? "rtl" : "ltr");
+  }, [locale]);
 
+  // Смена языка: мгновенно локально + запись на сервер
   const setLocale = useCallback(
     async (code) => {
       setLocaleState(code);
       localStorage.setItem("sf_lang", code);
-      try {
-        if (userId) {
-          setSavingLanguage(true);
-          await updateLanguage({ variables: { id: userId, language: code } });
+
+      // гарантируем, что знаем userInfoId: если вдруг ещё нет — попробуем подтянуть
+      let id = userInfoId;
+      if (!id) {
+        try {
+          const res = await fetchMyUserInfo();
+          id = res?.data?.meFull?.user_info?.documentId || null;
+          if (id) {
+            setUserInfoId(id);
+            localStorage.setItem("sf_userInfoId", id);
+          }
+        } catch {
+          // не смогли достать id — просто останемся на локальном языке
         }
+      }
+
+      if (!id) return; // нет id — не отправляем мутацию
+
+      try {
+        setSavingLanguage(true);
+        await updateUserInfo({
+          variables: { documentId: id, data: { language: code } },
+        });
       } catch {
-        // молчим — права докрутим позже
+        // тихо: права/валидация могут появиться позже
       } finally {
         setSavingLanguage(false);
       }
     },
-    [userId, updateLanguage]
+    [userInfoId, fetchMyUserInfo, updateUserInfo]
   );
 
-  // 4) Глобальный dir
-  useEffect(() => {
-    const isRtl = locale === "he";
-    document.documentElement.setAttribute("dir", isRtl ? "rtl" : "ltr");
-  }, [locale]);
-
-  // 5) t()
   const t = useMemo(() => {
     return (path, fallback = "-") => pick(translations?.[locale], path) ?? fallback;
   }, [translations, locale]);
@@ -100,9 +133,12 @@ export function LanguageProvider({ children }) {
       t,
       languages: LANGS,
       savingLanguage,
-      refreshMe,
+      refreshMe: bootstrap,  // можно дернуть после явного логина
+      userInfoId,
+      setUserInfoId,
+      loginDemo: login,      // если хочешь вызывать демо-логин снаружи
     }),
-    [locale, setLocale, t, savingLanguage, refreshMe]
+    [locale, setLocale, t, savingLanguage, bootstrap, userInfoId, login]
   );
 
   return <LanguageCtx.Provider value={value}>{children}</LanguageCtx.Provider>;

@@ -8,6 +8,8 @@
 //   );
 // }
 
+///////////////////////////////////////////////////////
+
 import React, { useEffect } from "react";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { GET_STICKERS } from "../api/get";
@@ -15,19 +17,18 @@ import { LOGIN } from "../api/mutations";
 import { useLanguage } from "../context/LanguageContext";
 import LanguageSelect from "../components/LanguageSelect";
 
-const DEMO_EMAIL = "glazman.b@gmail.com";
-const DEMO_PASSWORD = "JjgYsyd44cGoGF";
+// демо-логин — подставь свои тестовые данные или убери
+const DEMO_EMAIL = "temp@sandifund.com";
+const DEMO_PASSWORD = "demo123";
 
 export default function Profile() {
   const { locale, t, refreshMe } = useLanguage();
 
-  // Демо-логин — только тут; потом уберём в /auth
   const [login] = useMutation(LOGIN, {
     onCompleted: async ({ login }) => {
       if (login?.jwt) {
         localStorage.setItem("sf_jwt", login.jwt);
-        // после логина дёрнем me, чтобы связать userId с контекстом
-        await refreshMe();
+        await refreshMe(); // сразу подтянем authoritative язык с бэка
       }
     },
   });
@@ -41,7 +42,6 @@ export default function Profile() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Стикеры под текущую локаль
   const { data: stickersData } = useQuery(GET_STICKERS, {
     variables: { locale },
     fetchPolicy: "network-only",
@@ -51,13 +51,11 @@ export default function Profile() {
     <div className="max-w-5xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Profile</h1>
 
-      {/* Красивая выпадашка языка (флаг + название) */}
       <div className="mb-6">
         <label className="block text-sm font-medium mb-2">Language</label>
         <LanguageSelect />
       </div>
 
-      {/* Строки из Translation через t() */}
       <div className="mb-6">
         <div className="text-sm text-gray-600 mb-1">auth.register</div>
         <div className="text-lg font-semibold">{t("auth.register")}</div>
@@ -66,7 +64,6 @@ export default function Profile() {
         <div className="text-lg font-semibold">{t("auth.rememberMe")}</div>
       </div>
 
-      {/* Стикеры */}
       <div>
         <h2 className="text-xl font-semibold mb-3">Stickers ({locale})</h2>
         <div className="grid sm:grid-cols-2 gap-3">
@@ -84,3 +81,6 @@ export default function Profile() {
     </div>
   );
 }
+
+
+

@@ -1,12 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const CREATE_ORDER = gql`
-  mutation CreateOrder($input: OrderInput!) {
-    createOrder(data: $input) { id status }
-  }
-`;
-
-// ✅ Логин (JWT + user)
+// Логин (для демо/разработки, если нужно)
 export const LOGIN = gql`
   mutation Login($identifier: String!, $password: String!) {
     login(input: { identifier: $identifier, password: $password }) {
@@ -16,15 +10,14 @@ export const LOGIN = gql`
   }
 `;
 
-// ✅ Обновление языка пользователя (без data/attributes-обёрток)
-export const UPDATE_USER_LANGUAGE = gql`
-  mutation UpdateUserLanguage($id: ID!, $language: String!) {
-    updateUsersPermissionsUser(id: $id, data: { language: $language }) {
-      id
-      email
-      language
+// Обновление языка в отдельной сущности UserInfo
+export const UPDATE_USER_INFO = gql`
+  mutation UpdateUserInfo($documentId: ID!, $data: UserInfoInput!) {
+    updateUserInfo(documentId: $documentId, data: $data) {
+      documentId
     }
   }
 `;
+
 
 

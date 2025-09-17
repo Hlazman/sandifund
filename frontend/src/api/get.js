@@ -1,9 +1,6 @@
 import { gql } from "@apollo/client";
 
-// уже был
-export const GET_STICERS = gql`query Sticers { sticers { id name } }`;
-
-// ✅ для Translation
+// 1) Переводы (single-type Translation)
 export const GET_TRANSLATIONS = gql`
   query Translation {
     translation {
@@ -12,19 +9,7 @@ export const GET_TRANSLATIONS = gql`
   }
 `;
 
-// ✅ текущий пользователь
-export const GET_ME = gql`
-  query Me {
-    me {
-      id
-      email
-      username
-      language
-    }
-  }
-`;
-
-// ✅ локализованные стикеры
+// 2) Локализованный контент (пример: stickers)
 export const GET_STICKERS = gql`
   query Stickers($locale: I18NLocaleCode) {
     stickers(locale: $locale) {
@@ -33,3 +18,18 @@ export const GET_STICKERS = gql`
     }
   }
 `;
+
+// 3) Полные данные текущего пользователя с привязкой к UserInfo.
+//    Важно: поле называется именно meFull, а связь — user_info (snake_case), как ты указал.
+export const GET_MY_USER_INFO = gql`
+  query MyUserInfo {
+    meFull {
+      user_info {
+        documentId
+        language
+      }
+    }
+  }
+`;
+
+
