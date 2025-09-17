@@ -57,10 +57,10 @@
         }
       }
     },
-    "user": {
+    "user_info": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "plugin::users-permissions.user",
+      "target": "api::user-info.user-info",
       "inversedBy": "notifications"
     }
   }

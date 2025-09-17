@@ -66,76 +66,10 @@
       "inversedBy": "users",
       "configurable": false
     },
-    "language": {
-      "type": "enumeration",
-      "default": "en",
-      "enum": [
-        "en",
-        "he",
-        "uk",
-        "ru"
-      ]
-    },
-    "donationSum": {
-      "type": "decimal",
-      "default": 0,
-      "min": 0
-    },
-    "avatar": {
-      "type": "media",
-      "multiple": false,
-      "allowedTypes": [
-        "images"
-      ]
-    },
-    "isActive": {
-      "type": "boolean",
-      "default": true
-    },
-    "products": {
+    "user_info": {
       "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::product.product",
-      "mappedBy": "users"
-    },
-    "notifications": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::notification.notification",
-      "mappedBy": "user"
-    },
-    "orders": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::order.order",
-      "mappedBy": "user"
-    },
-    "transactions": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::transaction.transaction",
-      "mappedBy": "user"
-    },
-    "selectedFunds": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::fund.fund"
-    },
-    "stickerPacks": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::sticker-pack.sticker-pack"
-    },
-    "purchasedProducts": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::product.product",
-      "inversedBy": "purchasedBy"
-    },
-    "subscriptions": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::subscription.subscription",
+      "relation": "oneToOne",
+      "target": "api::user-info.user-info",
       "mappedBy": "user"
     }
   }

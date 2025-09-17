@@ -51,12 +51,6 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::payment-method.payment-method"
-    },
-    "user": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "plugin::users-permissions.user",
-      "inversedBy": "subscriptions"
     }
   }
 }
