@@ -15,12 +15,6 @@
     }
   },
   "attributes": {
-    "user": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "plugin::users-permissions.user",
-      "inversedBy": "transactions"
-    },
     "order": {
       "type": "relation",
       "relation": "manyToOne",
@@ -107,6 +101,12 @@
           "localized": true
         }
       }
+    },
+    "user_info": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::user-info.user-info",
+      "inversedBy": "transactions"
     }
   }
 }

@@ -15,12 +15,6 @@
     }
   },
   "attributes": {
-    "user": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "plugin::users-permissions.user",
-      "inversedBy": "orders"
-    },
     "products": {
       "type": "relation",
       "relation": "oneToMany",
@@ -81,6 +75,12 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::payment-method.payment-method"
+    },
+    "user_info": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::user-info.user-info",
+      "inversedBy": "orders"
     }
   }
 }

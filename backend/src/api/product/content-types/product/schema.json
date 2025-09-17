@@ -82,17 +82,11 @@
       "target": "api::fund.fund",
       "inversedBy": "products"
     },
-    "users": {
+    "user_info": {
       "type": "relation",
-      "relation": "manyToMany",
-      "target": "plugin::users-permissions.user",
+      "relation": "manyToOne",
+      "target": "api::user-info.user-info",
       "inversedBy": "products"
-    },
-    "purchasedBy": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "plugin::users-permissions.user",
-      "mappedBy": "purchasedProducts"
     }
   }
 }
