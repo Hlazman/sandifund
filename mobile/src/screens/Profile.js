@@ -20,21 +20,21 @@ import { LOGIN } from "../api/mutations";
 import { useLanguage } from "../context/LanguageContext";
 import LanguageSelect from "../components/LanguageSelect";
 
+// демо-логин — оставляю как у тебя; можно заменить на temp@sandifund.com / demo123
 const DEMO_EMAIL = "glazman.b@gmail.com";
 const DEMO_PASSWORD = "JjgYsyd44cGoGF";
 
 export default function Profile() {
   const { locale, t, refreshMe } = useLanguage();
-  // ⬇️ Флаг, что авторизация завершена (есть/нет JWT и мы попробовали me)
   const [authReady, setAuthReady] = useState(!!globalThis.sf_jwt);
 
-  // Демо-логин (как и раньше)
+  // Демо-логин → после него тянем authoritative язык (meFull → user_info)
   const [login] = useMutation(LOGIN, {
     onCompleted: async ({ login }) => {
       if (login?.jwt) {
         globalThis.sf_jwt = login.jwt;
         await refreshMe().catch(() => {});
-        setAuthReady(true); // теперь можно делать защищённые запросы
+        setAuthReady(true);
       }
     },
   });
@@ -44,9 +44,11 @@ export default function Profile() {
     (async () => {
       if (!globalThis.sf_jwt) {
         try {
-          await login({ variables: { identifier: DEMO_EMAIL, password: DEMO_PASSWORD } });
+          await login({
+            variables: { identifier: DEMO_EMAIL, password: DEMO_PASSWORD },
+          });
         } catch {
-          // ок, без прав — оставим authReady=false (запросы скипнутся)
+          // остались без JWT — authReady=false, запросы ниже будут skip
         }
       } else {
         await refreshMe().catch(() => {});
@@ -59,7 +61,7 @@ export default function Profile() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ⬇️ ВАЖНО: не шлём запрос stickers, пока не готовы по auth (skip)
+  // Не шлём локализованный контент, пока не готовы по auth (решает Forbidden)
   const {
     data: stickersData,
     error: stickersError,
@@ -68,13 +70,12 @@ export default function Profile() {
     refetch,
   } = useQuery(GET_STICKERS, {
     variables: { locale: (locale || "en").toLowerCase() },
-    fetchPolicy: "cache-and-network",     // держим старые данные, пока прилетает новая локаль
-    returnPartialData: true,               // можно показывать прежний список
-    notifyOnNetworkStatusChange: true,     // чтобы видеть refetch/setVariables
-    skip: !authReady,                      // ← решает «Forbidden access» на входе
+    fetchPolicy: "cache-and-network",
+    returnPartialData: true,
+    notifyOnNetworkStatusChange: true,
+    skip: !authReady,
   });
 
-  // Когда идёт любой запрос/рефетч — показываем лоадер (а не «Нет данных…»)
   const isLoading =
     !authReady || loading || networkStatus === 1 || networkStatus === 2 || networkStatus === 4;
 
@@ -99,7 +100,6 @@ export default function Profile() {
         <View>
           <Text style={{ fontWeight: "700", marginBottom: 6 }}>Stickers ({locale})</Text>
 
-          {/* Ошибку показываем только если мы «готовы» по auth и это не временный refetch */}
           {!isLoading && stickersError ? (
             <View
               style={{
@@ -124,7 +124,6 @@ export default function Profile() {
             </View>
           ) : null}
 
-          {/* Лоадер вместо «Нет данных…», чтобы убрать мерцание при смене языка */}
           {isLoading ? (
             <View style={{ paddingVertical: 8 }}>
               <ActivityIndicator />
@@ -153,3 +152,4 @@ export default function Profile() {
     </View>
   );
 }
+

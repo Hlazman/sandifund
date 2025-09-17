@@ -1,15 +1,14 @@
 import React, { useState } from "react";
-// import { Modal, Pressable, View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Modal, Pressable, View, Text, TouchableOpacity, StyleSheet, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import CountryFlag from "react-native-country-flag";
 import { useLanguage } from "../context/LanguageContext";
 
-// язык → ISO страны (должно быть 2 буквы, верхний регистр)
+// язык → ISO страны (2 буквы, верхний регистр)
 const FLAG_CODE = { en: "GB", ru: "RU", he: "IL" };
 
 function Flag({ code, size = 18 }) {
-  const iso = FLAG_CODE[code] || "GB"; // безопасный фолбэк
+  const iso = FLAG_CODE[code] || "GB";
   return (
     <View
       style={{
@@ -22,7 +21,6 @@ function Flag({ code, size = 18 }) {
         backgroundColor: "transparent",
       }}
     >
-      {/* Чуть меньший размер + центрирование → не режет края иконки */}
       <CountryFlag isoCode={iso} size={Math.max(1, size - 2)} />
     </View>
   );
@@ -36,7 +34,7 @@ export default function LanguageSelect({ onChange }) {
 
   const handlePick = async (code) => {
     setOpen(false);
-    await setLocale(code);
+    await setLocale(code);   // локально + сохранение в UserInfo (если знаем documentId)
     onChange?.(code);
   };
 
@@ -90,18 +88,13 @@ const s = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#e5e7eb",
     backgroundColor: "#fff",
-    // shadowColor: "#000",
-    // shadowOpacity: 0.05,
-    // shadowRadius: 6,
-    // elevation: 2,
     ...(Platform.OS === "web"
-       ? { boxShadow: "0px 6px 12px rgba(0,0,0,0.06)" }
-       : { shadowColor: "#000", shadowOpacity: 0.05, shadowRadius: 6, elevation: 2 }),
+      ? { boxShadow: "0px 6px 12px rgba(0,0,0,0.06)" }
+      : { shadowColor: "#000", shadowOpacity: 0.05, shadowRadius: 6, elevation: 2 }),
   },
   triggerLeft: { flexDirection: "row", alignItems: "center", columnGap: 8 },
   triggerText: { fontWeight: "600" },
   saving: { marginLeft: 8, opacity: 0.7 },
-//   backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.35)" },
   backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.35)" },
   dropdown: {
     position: "absolute",
@@ -113,10 +106,6 @@ const s = StyleSheet.create({
     borderColor: "#f0f0f0",
     backgroundColor: "#fff",
     paddingVertical: 6,
-    // shadowColor: "#000",
-    // shadowOpacity: 0.12,
-    // shadowRadius: 12,
-    // elevation: 8,
     ...(Platform.OS === "web"
       ? { boxShadow: "0px 12px 24px rgba(0,0,0,0.12)" }
       : { shadowColor: "#000", shadowOpacity: 0.12, shadowRadius: 12, elevation: 8 }),
