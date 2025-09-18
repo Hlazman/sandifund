@@ -3,6 +3,7 @@ import * as Tabs from "@radix-ui/react-tabs";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useMutation, useApolloClient } from "@apollo/client/react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 
 import { LOGIN, REGISTER, CREATE_USER_INFO, UPDATE_USER_INFO } from "../api/mutations";
 import { GET_ME, GET_MY_USER_INFO } from "../api/get";
@@ -17,7 +18,6 @@ export default function Auth() {
   const location = useLocation();
   const apollo = useApolloClient();
 
-  // const { locale, setLocale, t } = useLanguage();
   const { locale, setLocale, t, dir } = useLanguage();
   const { loginWithToken } = useAuth();
 
@@ -37,9 +37,15 @@ export default function Auth() {
   const [submitError, setSubmitError] = useState("");
   const redirectAfterLogin = useMemo(() => location.state?.from?.pathname || "/", [location.state]);
 
-  // выбранный язык на этой странице (чтобы точно сохранить его в UserInfo)
+  // выбранный язык на этой странице (точно сохраним в UserInfo)
   const [selectedLang, setSelectedLang] = useState(locale);
   useEffect(() => { setSelectedLang(locale); }, [locale]);
+
+  // показать/скрыть пароль (web)
+  const [showLoginPass, setShowLoginPass] = useState(false);
+  const [showRegPass, setShowRegPass] = useState(false);
+  const [showRegPass2, setShowRegPass2] = useState(false);
+  const isRTL = dir === "rtl";
 
   // gql
   const [doLogin, { loading: loggingIn }] = useMutation(LOGIN);
@@ -69,11 +75,11 @@ export default function Auth() {
           localStorage.setItem("sf_userInfoId", ui.documentId);
           await updateUserInfo({ variables: { documentId: ui.documentId, data: { language: selectedLang } } });
         }
-      } catch { /* ок */ }
+      } catch { /* ignore */ }
 
       navigate(redirectAfterLogin, { replace: true });
     } catch (err) {
-      setSubmitError(err.message || "Login failed");
+      setSubmitError(t("errors.loginFailed"));
     }
   };
 
@@ -81,8 +87,8 @@ export default function Auth() {
     e.preventDefault();
     setSubmitError("");
 
-    if (!agree) { setSubmitError(t("auth.agreeWith") || "Нужно согласиться"); return; }
-    if (regPass !== regPass2) { setSubmitError("Пароли не совпадают"); return; }
+    if (!agree) { setSubmitError(t("auth.errors.agreeRequired")); return; }
+    if (regPass !== regPass2) { setSubmitError(t("auth.errors.passwordsMismatch")); return; }
 
     try {
       const { data } = await doRegister({
@@ -106,7 +112,7 @@ export default function Auth() {
 
       navigate("/payment", { replace: true });
     } catch (err) {
-      setSubmitError(err.message || "Register failed");
+      setSubmitError(t("errors.registerFailed"));
     }
   };
 
@@ -132,26 +138,37 @@ export default function Auth() {
         <Tabs.Content value="login" className="p-4 space-y-4">
           <form onSubmit={onLogin} className="space-y-3">
             <div>
-              {/* <label className="text-sm block mb-1">{t("auth.email")}</label> */}
-              <label className={`text-sm block mb-1 ${dir === "rtl" ? "text-right" : ""}`}>{t("auth.email")}</label>
+              <label className={`text-sm block mb-1 ${isRTL ? "text-right" : ""}`}>{t("auth.email")}</label>
               <input
                 type="email"
                 required
                 value={loginEmail}
                 onChange={(e) => setLoginEmail(e.target.value)}
+                placeholder={t("auth.placeholders.email")}
                 className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500/50"
               />
             </div>
+
             <div>
-              {/* <label className="text-sm block mb-1">{t("auth.password")}</label> */}
-              <label className={`text-sm block mb-1 ${dir === "rtl" ? "text-right" : ""}`}>{t("auth.password")}</label>
-              <input
-                type="password"
-                required
-                value={loginPass}
-                onChange={(e) => setLoginPass(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500/50"
-              />
+              <label className={`text-sm block mb-1 ${isRTL ? "text-right" : ""}`}>{t("auth.password")}</label>
+              <div className="relative">
+                <input
+                  type={showLoginPass ? "text" : "password"}
+                  required
+                  value={loginPass}
+                  onChange={(e) => setLoginPass(e.target.value)}
+                  placeholder={t("auth.placeholders.password")}
+                  className={`w-full rounded-lg border border-gray-300 py-2 outline-none focus:ring-2 focus:ring-indigo-500/50 ${isRTL ? "pl-12 pr-3" : "pr-12 pl-3"}`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowLoginPass(v => !v)}
+                  aria-label={showLoginPass ? t("auth.hidePassword") : t("auth.showPassword")}
+                  className={`absolute inset-y-0 ${isRTL ? "left-2" : "right-2"} grid place-items-center px-1 text-gray-600 hover:text-gray-800`}
+                >
+                  {showLoginPass ? <Eye size={18} /> : <EyeOff size={18} />}
+                </button>
+              </div>
             </div>
 
             <div className="flex items-center justify-between">
@@ -180,37 +197,59 @@ export default function Auth() {
         <Tabs.Content value="register" className="p-4 space-y-4">
           <form onSubmit={onRegister} className="space-y-3">
             <div>
-              {/* <label className="text-sm block mb-1">{t("auth.email")}</label> */}
-              <label className={`text-sm block mb-1 ${dir === "rtl" ? "text-right" : ""}`}>{t("auth.email")}</label>
+              <label className={`text-sm block mb-1 ${isRTL ? "text-right" : ""}`}>{t("auth.email")}</label>
               <input
                 type="email"
                 required
                 value={regEmail}
                 onChange={(e) => setRegEmail(e.target.value)}
+                placeholder={t("auth.placeholders.email")}
                 className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500/50"
               />
             </div>
+
             <div>
-              {/* <label className="text-sm block mb-1">{t("auth.password")}</label> */}
-              <label className={`text-sm block mb-1 ${dir === "rtl" ? "text-right" : ""}`}>{t("auth.password")}</label>
-              <input
-                type="password"
-                required
-                value={regPass}
-                onChange={(e) => setRegPass(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500/50"
-              />
+              <label className={`text-sm block mb-1 ${isRTL ? "text-right" : ""}`}>{t("auth.password")}</label>
+              <div className="relative">
+                <input
+                  type={showRegPass ? "text" : "password"}
+                  required
+                  value={regPass}
+                  onChange={(e) => setRegPass(e.target.value)}
+                  placeholder={t("auth.placeholders.password")}
+                  className={`w-full rounded-lg border border-gray-300 py-2 outline-none focus:ring-2 focus:ring-indigo-500/50 ${isRTL ? "pl-12 pr-3" : "pr-12 pl-3"}`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowRegPass(v => !v)}
+                  aria-label={showRegPass ? t("auth.hidePassword") : t("auth.showPassword")}
+                  className={`absolute inset-y-0 ${isRTL ? "left-2" : "right-2"} grid place-items-center px-1 text-gray-600 hover:text-gray-800`}
+                >
+                  {showRegPass ? <Eye size={18} /> : <EyeOff size={18} />}
+                </button>
+              </div>
             </div>
+
             <div>
-              {/* <label className="text-sm block mb-1">{t("auth.confirmPassword")}</label> */}
-              <label className={`text-sm block mb-1 ${dir === "rtl" ? "text-right" : ""}`}>{t("auth.confirmPassword")}</label>
-              <input
-                type="password"
-                required
-                value={regPass2}
-                onChange={(e) => setRegPass2(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500/50"
-              />
+              <label className={`text-sm block mb-1 ${isRTL ? "text-right" : ""}`}>{t("auth.confirmPassword")}</label>
+              <div className="relative">
+                <input
+                  type={showRegPass2 ? "text" : "password"}
+                  required
+                  value={regPass2}
+                  onChange={(e) => setRegPass2(e.target.value)}
+                  placeholder={t("auth.placeholders.confirmPassword")}
+                  className={`w-full rounded-lg border border-gray-300 py-2 outline-none focus:ring-2 focus:ring-indigo-500/50 ${isRTL ? "pl-12 pr-3" : "pr-12 pl-3"}`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowRegPass2(v => !v)}
+                  aria-label={showRegPass2 ? t("auth.hidePassword") : t("auth.showPassword")}
+                  className={`absolute inset-y-0 ${isRTL ? "left-2" : "right-2"} grid place-items-center px-1 text-gray-600 hover:text-gray-800`}
+                >
+                  {showRegPass2 ? <Eye size={18} /> : <EyeOff size={18} />}
+                </button>
+              </div>
             </div>
 
             {/* согласие: 3 строки */}
