@@ -1,186 +1,91 @@
-// import React, { useEffect, useRef, useState } from "react";
-// import {
-//   View, Text, Image, TouchableOpacity, Modal, Pressable, ScrollView, StyleSheet,
-//   Animated, Easing, Platform,
-// } from "react-native";
-// import { SafeAreaView } from "react-native-safe-area-context";
-// import { Ionicons } from "@expo/vector-icons";
-// import { useAuth } from "../context/AuthContext";
-
-// const MENU_ITEMS = [
-//   { name: "Sticers", label: "Sticers", icon: "star-outline" },
-//   { name: "Fonds", label: "Fonds", icon: "wallet-outline" },
-//   { name: "Goods", label: "Goods", icon: "cube-outline" },
-//   { name: "Orders", label: "Orders", icon: "reader-outline" },
-//   { name: "FAQ", label: "FAQ", icon: "help-circle-outline" },
-//   { name: "Terms", label: "Terms of Use", icon: "document-text-outline" },
-//   { name: "Privacy", label: "Privacy Policy", icon: "shield-checkmark-outline" },
-//   { name: "Profile", label: "Profile", icon: "person-outline" },
-// ];
-
-// export default function Header({ navigation }) {
-//   const [open, setOpen] = useState(false);
-//   const { isAuthed, logout } = useAuth();
-
-//   // анимация
-//   const slide = useRef(new Animated.Value(1)).current;
-//   useEffect(() => {
-//     Animated.timing(slide, {
-//       toValue: open ? 0 : 1,
-//       duration: open ? 280 : 240,
-//       easing: open ? Easing.out(Easing.cubic) : Easing.in(Easing.cubic),
-//       useNativeDriver: Platform.OS !== "web",
-//     }).start();
-//   }, [open, slide]);
-//   const translateX = slide.interpolate({ inputRange: [0, 1], outputRange: [0, 280] });
-
-//   return (
-//     <>
-//       <View style={styles.header}>
-//         <TouchableOpacity
-//           onPress={() => navigation.navigate(isAuthed ? "Sticers" : "Auth")}
-//           style={{ flexDirection: "row", alignItems: "center" }}
-//         >
-//           <Image source={require("../../assets/icon.png")} style={{ width: 32, height: 32, marginRight: 8 }} />
-//           <Text style={{ fontWeight: "600" }}>Cherity Sandifund</Text>
-//         </TouchableOpacity>
-
-//         <View style={{ flexDirection: "row", alignItems: "center" }}>
-//           <TouchableOpacity
-//             onPress={() => {}}
-//             style={{ padding: 8, opacity: isAuthed ? 1 : 0.4 }}
-//             accessibilityLabel="Notifications"
-//             disabled={!isAuthed}
-//           >
-//             <Ionicons name="notifications-outline" size={20} />
-//           </TouchableOpacity>
-
-//           {isAuthed ? (
-//             <TouchableOpacity onPress={() => setOpen(true)} style={{ padding: 8 }} accessibilityLabel="Open menu">
-//               <Ionicons name="menu-outline" size={32} />
-//             </TouchableOpacity>
-//           ) : (
-//             <View style={{ padding: 8, opacity: 0.4 }}>
-//               <Ionicons name="menu-outline" size={32} />
-//             </View>
-//           )}
-//         </View>
-//       </View>
-
-//       {/* Меню */}
-//       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
-//         <View style={[StyleSheet.absoluteFill, { pointerEvents: "box-none" }]}>
-//           <Pressable style={[StyleSheet.absoluteFill, { zIndex: 1 }]} onPress={() => setOpen(false)}>
-//             <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.35)" }} />
-//           </Pressable>
-
-//           <Animated.View style={[styles.drawer, { transform: [{ translateX }], zIndex: 2 }]}>
-//             <SafeAreaView style={styles.drawerInner}>
-//               <View style={styles.drawerHeader}>
-//                 <Text style={{ fontSize: 16, fontWeight: "700" }}>Меню</Text>
-//                 <TouchableOpacity
-//                   onPress={() => setOpen(false)}
-//                   accessibilityLabel="Close menu"
-//                   hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
-//                 >
-//                   <Ionicons name="close" size={24} />
-//                 </TouchableOpacity>
-//               </View>
-
-//               <ScrollView contentContainerStyle={{ paddingVertical: 6 }} showsVerticalScrollIndicator={false}>
-//                 {MENU_ITEMS.map((item) => (
-//                   <TouchableOpacity
-//                     key={item.name}
-//                     onPress={() => {
-//                       setOpen(false);
-//                       navigation.navigate(item.name);
-//                     }}
-//                     style={styles.menuItem}
-//                   >
-//                     <Ionicons name={item.icon} size={18} style={{ marginRight: 10 }} />
-//                     <Text style={{ fontSize: 15 }}>{item.label}</Text>
-//                   </TouchableOpacity>
-//                 ))}
-
-//                 {/* Logout */}
-//                 <TouchableOpacity
-//                   // onPress={() => { setOpen(false); logout(); navigation.reset({ index: 0, routes: [{ name: "Auth" }] }); }}
-//                    onPress={() => {
-//                     setOpen(false);
-//                     logout();
-//                   }}
-//                   style={[styles.menuItem, { borderTopWidth: 1, borderTopColor: "#f0f0f0", marginTop: 8 }]}
-//                 >
-//                   <Ionicons name="log-out-outline" size={18} style={{ marginRight: 10 }} />
-//                   <Text style={{ fontSize: 15 }}>Logout</Text>
-//                 </TouchableOpacity>
-//               </ScrollView>
-//             </SafeAreaView>
-//           </Animated.View>
-//         </View>
-//       </Modal>
-//     </>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   header: {
-//     height: 60, flexDirection: "row", alignItems: "center", justifyContent: "space-between",
-//     backgroundColor: "#fff", borderBottomWidth: 1, borderBottomColor: "#e5e7eb", paddingHorizontal: 16,
-//   },
-//   drawer: {
-//     position: "absolute", right: 0, top: 0, width: 280, height: "100%", backgroundColor: "#fff",
-//     borderLeftWidth: 1, borderLeftColor: "#e5e7eb",
-//     ...(Platform.OS === "web"
-//       ? { boxShadow: "0px 12px 24px rgba(0,0,0,0.15)" }
-//       : { shadowColor: "#000", shadowOpacity: 0.15, shadowRadius: 12, elevation: 8 }),
-//   },
-//   drawerInner: { flex: 1 },
-//   drawerHeader: {
-//     flexDirection: "row", alignItems: "center", justifyContent: "space-between",
-//     paddingHorizontal: 12, paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: "#f0f0f0",
-//   },
-//   menuItem: { paddingVertical: 12, paddingHorizontal: 14, flexDirection: "row", alignItems: "center" },
-// });
-
-
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import {
-  View, Text, Image, TouchableOpacity, Modal, Pressable, ScrollView, StyleSheet,
-  Animated, Easing, Platform,
+  View, Text, Image, TouchableOpacity, Modal, Pressable, ScrollView,
+  StyleSheet, Animated, Easing, Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
+import NotificationsModal from "../components/NotificationsModal";
+import { useQuery } from "@apollo/client/react";
+import { GET_NOTIFICATIONS, GET_MY_READ_NOTIFICATIONS } from "../api/get";
 
-const ITEMS = [
-  { name: "Sticers", icon: "star-outline", key: "sticers" },
-  { name: "Fonds",   icon: "wallet-outline", key: "fonds" },
-  { name: "Goods",   icon: "cube-outline",   key: "goods" },
-  { name: "Orders",  icon: "reader-outline", key: "orders" },
-  { name: "FAQ",     icon: "help-circle-outline", key: "faq" },
-  { name: "Terms",   icon: "document-text-outline", key: "terms" },
-  { name: "Privacy", icon: "shield-checkmark-outline", key: "privacy" },
-  { name: "Profile", icon: "person-outline", key: "profile" },
+const MENU_ITEMS = [
+  { name: "Sticers", key: "sticers", icon: "star-outline" },
+  { name: "Fonds", key: "fonds", icon: "wallet-outline" },
+  { name: "Goods", key: "goods", icon: "cube-outline" },
+  { name: "Orders", key: "orders", icon: "reader-outline" },
+  { name: "FAQ", key: "faq", icon: "help-circle-outline" },
+  { name: "Terms", key: "terms", icon: "document-text-outline" },
+  { name: "Privacy", key: "privacy", icon: "shield-checkmark-outline" },
+  { name: "Profile", key: "profile", icon: "person-outline" },
 ];
 
 export default function Header({ navigation }) {
-  const [open, setOpen] = useState(false);
   const { isAuthed, logout } = useAuth();
-  const { t, dir } = useLanguage();
+  const { t, locale: ctxLocale } = useLanguage();
 
-  // анимация
-  const slide = useRef(new Animated.Value(1)).current;
+  const [open, setOpen] = useState(false);
+  const slide = useRef(new Animated.Value(0)).current;
+  const openedAtRef = useRef(0);
+  const [notifOpen, setNotifOpen] = useState(false);
+
+  // 1) Сначала тянем user_info (язык + прочитанные)
+  const { data: mineData, loading: mineLoading } = useQuery(GET_MY_READ_NOTIFICATIONS, {
+    variables: { pagination: { limit: 250 } },
+    fetchPolicy: "cache-and-network",
+    notifyOnNetworkStatusChange: true,
+    skip: !isAuthed,
+  });
+
+  // Язык пользователя из user_info (если нет — берём из контекста)
+  const userLang = mineData?.meFull?.user_info?.language || ctxLocale;
+
+  // 2) Теперь тянем уведомления уже с правильным locale
+  const { data: allData, loading: allLoading } = useQuery(GET_NOTIFICATIONS, {
+    variables: { pagination: { limit: 250 }, locale: userLang },
+    fetchPolicy: "cache-and-network",
+    // чтобы не подхватывать en "по умолчанию", ждём, пока будет готов user_info
+    skip: !isAuthed || mineLoading,
+  });
+
+  const readIds = useMemo(() => {
+    const arr = mineData?.meFull?.user_info?.notifications || [];
+    return new Set(arr.map((n) => n.documentId));
+  }, [mineData]);
+
+  const items = useMemo(() => allData?.notifications ?? [], [allData]);
+
+  const unreadCount = useMemo(
+    () => items.filter((n) => !readIds.has(n.documentId)).length,
+    [items, readIds]
+  );
+
+  const showBadge = useMemo(
+    () => isAuthed && !allLoading && !mineLoading && unreadCount > 0,
+    [isAuthed, allLoading, mineLoading, unreadCount]
+  );
+
+  // Drawer animation (280 -> 0)
   useEffect(() => {
     Animated.timing(slide, {
-      toValue: open ? 0 : 1,
-      duration: open ? 280 : 240,
+      toValue: open ? 1 : 0,
+      duration: open ? 380 : 260,
       easing: open ? Easing.out(Easing.cubic) : Easing.in(Easing.cubic),
       useNativeDriver: Platform.OS !== "web",
     }).start();
   }, [open, slide]);
-  const translateX = slide.interpolate({ inputRange: [0, 1], outputRange: [0, 280] });
+  const translateX = slide.interpolate({ inputRange: [0, 1], outputRange: [280, 0] });
+
+  const openDrawer = useCallback(() => {
+    openedAtRef.current = Date.now();
+    setOpen(true);
+  }, []);
+  const onOverlayPress = useCallback(() => {
+    if (Date.now() - openedAtRef.current < 250) return;
+    setOpen(false);
+  }, []);
 
   return (
     <>
@@ -190,21 +95,33 @@ export default function Header({ navigation }) {
           style={{ flexDirection: "row", alignItems: "center" }}
         >
           <Image source={require("../../assets/icon.png")} style={{ width: 32, height: 32, marginRight: 8 }} />
-          <Text style={{ fontWeight: "600" }}>{t("header.title")}</Text>
+          <Text style={{ fontWeight: "600" }}>{t("header.title") || "Sandifund"}</Text>
         </TouchableOpacity>
 
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <TouchableOpacity
-            onPress={() => {}}
-            style={{ padding: 8, opacity: isAuthed ? 1 : 0.4 }}
-            accessibilityLabel={t("header.notifications")}
-            disabled={!isAuthed}
-          >
-            <Ionicons name="notifications-outline" size={20} />
-          </TouchableOpacity>
+          <View style={{ padding: 8, opacity: isAuthed ? 1 : 0.4 }}>
+            <TouchableOpacity
+              onPress={() => isAuthed && setNotifOpen(true)}
+              accessibilityLabel={t("header.notifications") || "Notifications"}
+              disabled={!isAuthed}
+            >
+              <Ionicons name="notifications-outline" size={22} />
+              {showBadge && (
+                <View style={{
+                  position: "absolute", right: -2, top: -2,
+                  minWidth: 16, height: 16, borderRadius: 8,
+                  backgroundColor: "#dc2626", alignItems: "center", justifyContent: "center", paddingHorizontal: 3,
+                }}>
+                  <Text style={{ color: "#fff", fontSize: 10, fontWeight: "700" }}>
+                    {unreadCount > 99 ? "99+" : String(unreadCount)}
+                  </Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
 
           {isAuthed ? (
-            <TouchableOpacity onPress={() => setOpen(true)} style={{ padding: 8 }} accessibilityLabel={t("header.menu")}>
+            <TouchableOpacity onPress={openDrawer} style={{ padding: 8 }} accessibilityLabel={t("header.menu") || "Menu"}>
               <Ionicons name="menu-outline" size={32} />
             </TouchableOpacity>
           ) : (
@@ -215,81 +132,74 @@ export default function Header({ navigation }) {
         </View>
       </View>
 
-      {/* Меню */}
-      <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
-        <View style={[StyleSheet.absoluteFill, { pointerEvents: "box-none" }]}>
-          <Pressable style={[StyleSheet.absoluteFill, { zIndex: 1 }]} onPress={() => setOpen(false)}>
-            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.35)" }} />
-          </Pressable>
-
-          <Animated.View style={[styles.drawer, { transform: [{ translateX }], zIndex: 2 }]}>
+      <Modal transparent visible={open} animationType="none" onRequestClose={() => setOpen(false)}>
+        <View style={styles.overlay}>
+          <Pressable style={{ flex: 1 }} onPress={onOverlayPress} />
+          <Animated.View style={[styles.drawer, { transform: [{ translateX }] }]}>
             <SafeAreaView style={styles.drawerInner}>
               <View style={styles.drawerHeader}>
-                <Text style={{ fontSize: 16, fontWeight: "700" }}>{t("header.menu")}</Text>
-                <TouchableOpacity
-                  onPress={() => setOpen(false)}
-                  accessibilityLabel={t("common.close")}
-                  hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
-                >
-                  <Ionicons name="close" size={24} />
+                <Text style={{ fontSize: 16, fontWeight: "700" }}>{t("header.menu") || "Menu"}</Text>
+                <TouchableOpacity onPress={() => setOpen(false)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                  <Ionicons name="close" size={22} />
                 </TouchableOpacity>
               </View>
 
-              <ScrollView contentContainerStyle={{ paddingVertical: 6 }} showsVerticalScrollIndicator={false}>
-                {ITEMS.map((item) => (
-                  <TouchableOpacity
-                    key={item.name}
-                    onPress={() => {
-                      setOpen(false);
-                      navigation.navigate(item.name);
-                    }}
-                    style={[styles.menuItem, dir === "rtl" && { flexDirection: "row-reverse" }]}
-                  >
-                    <Ionicons
-                      name={item.icon}
-                      size={18}
-                      style={[
-                        { marginRight: 10 },
-                        dir === "rtl" && { marginRight: 0, marginLeft: 10 },
-                      ]}
-                    />
-                    <Text style={{ fontSize: 15 }}>{t(`header.items.${item.key}`)}</Text>
-                  </TouchableOpacity>
-                ))}
-
-                {/* Logout */}
+              <ScrollView contentContainerStyle={{ paddingVertical: 6 }}>
+                {MENU_ITEMS.map((it) => {
+                  const label = t(`header.items.${it.key}`) || it.name;
+                  return (
+                    <TouchableOpacity
+                      key={it.name}
+                      onPress={() => { setOpen(false); navigation.navigate(it.name); }}
+                      style={styles.menuItem}
+                    >
+                      <Ionicons name={it.icon} size={18} color="#4b5563" style={{ marginRight: 10 }} />
+                      <Text style={{ fontSize: 14 }}>{label}</Text>
+                    </TouchableOpacity>
+                  );
+                })}
                 <TouchableOpacity
-                  onPress={() => { setOpen(false); logout(); }}
-                  style={[
-                    styles.menuItem,
-                    { borderTopWidth: 1, borderTopColor: "#f0f0f0", marginTop: 8 },
-                    dir === "rtl" && { flexDirection: "row-reverse" },
-                  ]}
+                  // onPress={() => { setOpen(false); logout(); navigation.navigate("Auth"); }}
+                  onPress={async () => {
+                    setOpen(false);
+                    await logout(); // RootNav сам покажет UnauthedStack c экраном Auth
+                  }}
+                  style={[styles.menuItem, { marginTop: 6 }]}
                 >
-                  <Ionicons
-                    name="log-out-outline"
-                    size={18}
-                    style={[{ marginRight: 10 }, dir === "rtl" && { marginRight: 0, marginLeft: 10 }]}
-                  />
-                  <Text style={{ fontSize: 15 }}>{t("header.items.logout")}</Text>
+                  <Ionicons name="log-out-outline" size={18} color="#4b5563" style={{ marginRight: 10 }} />
+                  <Text style={{ fontSize: 14 }}>{t("header.items.logout") || "Logout"}</Text>
                 </TouchableOpacity>
               </ScrollView>
             </SafeAreaView>
           </Animated.View>
         </View>
       </Modal>
+
+      {/* Монтируем модалку только когда она открыта */}
+      {notifOpen && (
+        <NotificationsModal
+          visible
+          isAuthed={isAuthed}
+          onClose={() => setNotifOpen(false)}
+        />
+      )}
     </>
   );
 }
 
 const styles = StyleSheet.create({
   header: {
-    height: 60, flexDirection: "row", alignItems: "center", justifyContent: "space-between",
-    backgroundColor: "#fff", borderBottomWidth: 1, borderBottomColor: "#e5e7eb", paddingHorizontal: 16,
+    height: 56, paddingHorizontal: 12, backgroundColor: "#fff",
+    borderBottomWidth: 1, borderBottomColor: "#e5e7eb",
+    flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+  },
+  overlay: {
+    flex: 1, backgroundColor: "rgba(0,0,0,0.35)",
+    flexDirection: "row", justifyContent: "flex-end",
   },
   drawer: {
-    position: "absolute", right: 0, top: 0, width: 280, height: "100%", backgroundColor: "#fff",
-    borderLeftWidth: 1, borderLeftColor: "#e5e7eb",
+    position: "absolute", right: 0, top: 0, width: 280, height: "100%",
+    backgroundColor: "#fff", borderLeftWidth: 1, borderLeftColor: "#e5e7eb",
     ...(Platform.OS === "web"
       ? { boxShadow: "0px 12px 24px rgba(0,0,0,0.15)" }
       : { shadowColor: "#000", shadowOpacity: 0.15, shadowRadius: 12, elevation: 8 }),
@@ -301,3 +211,4 @@ const styles = StyleSheet.create({
   },
   menuItem: { paddingVertical: 12, paddingHorizontal: 14, flexDirection: "row", alignItems: "center" },
 });
+

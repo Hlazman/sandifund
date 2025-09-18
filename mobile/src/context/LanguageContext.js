@@ -12,111 +12,94 @@ const LANGS = [
   { code: "he", label: "עברית",  dir: "rtl" },
 ];
 
+const LANG_KEY = "sf_lang";
 const LanguageCtx = createContext(null);
 export const useLanguage = () => useContext(LanguageCtx);
 
 // безопасный геттер a.b.c
 function pick(obj, path) {
   if (!obj) return undefined;
-  return path.split(".").reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : undefined), obj);
+  return path.split(".").reduce(
+    (acc, key) => (acc && acc[key] !== undefined ? acc[key] : undefined),
+    obj
+  );
 }
 
 export function LanguageProvider({ children }) {
-  // 0) мгновенная локаль из рантайма; сервер потом может её перезаписать
-  const [locale, setLocaleState] = useState(globalThis.sf_lang || "en");
+  // начальный язык — синхронно из localStorage на web (native: "en")
+  const [locale, setLocaleState] = useState(() => {
+    let initial = "en";
+    if (Platform.OS === "web") {
+      try {
+        const saved = localStorage.getItem(LANG_KEY);
+        if (saved) initial = saved;
+      } catch {}
+    }
+    globalThis.sf_lang = initial;
+    return initial;
+  });
+
   const [savingLanguage, setSavingLanguage] = useState(false);
 
-  // 1) documentId сущности UserInfo: из рантайма или ENV (как запасной вариант)
-  const envUserInfoId = process.env.EXPO_PUBLIC_USERINFO_ID || null;
-  const [userInfoId, setUserInfoId] = useState(globalThis.sf_userInfoId || envUserInfoId || null);
-  useEffect(() => {
-    if (userInfoId) globalThis.sf_userInfoId = userInfoId;
-  }, [userInfoId]);
-
-  // 2) Переводы
+  // переводы
   const { data: trData } = useQuery(GET_TRANSLATIONS, { fetchPolicy: "cache-first" });
   const translations = useMemo(() => trData?.translation?.data ?? {}, [trData]);
 
-  // 3) Чтение своих данных (authoritative язык): meFull → user_info
+  // user_info → подтянуть language/documentId после авторизации
   const [fetchMyUserInfo] = useLazyQuery(GET_MY_USER_INFO, { fetchPolicy: "network-only" });
+  const [updateUserInfo] = useMutation(UPDATE_USER_INFO);
 
+  // bootstrap читает meFull.user_info и синхронизирует язык
   const bootstrap = useCallback(async () => {
-    // если нет JWT — просто используем локальный язык
-    if (!globalThis.sf_jwt && !envUserInfoId) return;
-
+    if (!globalThis.sf_jwt) return;
     try {
       const res = await fetchMyUserInfo();
       const ui = res?.data?.meFull?.user_info || null;
-
-      if (ui?.documentId) {
-        setUserInfoId(ui.documentId);
-        globalThis.sf_userInfoId = ui.documentId;
-      }
-
-      if (ui?.language) {
-        if (ui.language !== locale) {
-          setLocaleState(ui.language);
-          globalThis.sf_lang = ui.language;
+      if (ui?.documentId) globalThis.sf_userInfoId = ui.documentId;
+      if (ui?.language && ui.language !== locale) {
+        setLocaleState(ui.language);
+        globalThis.sf_lang = ui.language;
+        if (Platform.OS === "web") {
+          try { localStorage.setItem(LANG_KEY, ui.language); } catch {}
         }
       }
-    } catch {
-      // нет прав/резолвера — остаёмся на локальном языке
-    }
-  }, [fetchMyUserInfo, locale, envUserInfoId]);
+    } catch {}
+  }, [fetchMyUserInfo, locale]);
 
-  useEffect(() => {
-    bootstrap().catch(() => {});
-  }, [bootstrap]);
+  // автозапуск bootstrap
+  useEffect(() => { bootstrap().catch(() => {}); }, [bootstrap]);
 
-  // 4) Обновление на бэке
-  const [updateUserInfo] = useMutation(UPDATE_USER_INFO);
-
-  // 5) Смена языка: мгновенно локально + запись в UserInfo (если знаем documentId)
+  // смена языка пользователем
   const setLocale = useCallback(
     async (code) => {
       setLocaleState(code);
       globalThis.sf_lang = code;
-
-      // гарантируем документ
-      let id = userInfoId;
-      if (!id) {
-        try {
-          const res = await fetchMyUserInfo();
-          id = res?.data?.meFull?.user_info?.documentId || envUserInfoId || null;
-          if (id) {
-            setUserInfoId(id);
-            globalThis.sf_userInfoId = id;
-          }
-        } catch {
-          // не смогли достать id — останемся только на локальном языке
-        }
+      if (Platform.OS === "web") {
+        try { localStorage.setItem(LANG_KEY, code); } catch {}
       }
 
+      const id = globalThis.sf_userInfoId || null;
       if (!id) return;
 
       try {
         setSavingLanguage(true);
         await updateUserInfo({ variables: { documentId: id, data: { language: code } } });
-      } catch {
-        // права/валидация могут быть не готовы — не шумим
-      } finally {
+      } catch {} finally {
         setSavingLanguage(false);
       }
     },
-    [userInfoId, fetchMyUserInfo, envUserInfoId, updateUserInfo]
+    [updateUserInfo]
   );
 
-  // 6) RTL — без forceRTL, чтобы не требовать перезапуска
+  // RTL — без forceRTL
   useEffect(() => {
     I18nManager.allowRTL(locale === "he");
-    // На web forceRTL не применяем, на native — поведение корректное без перезапуска
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [locale, Platform.OS]);
+  }, [locale]);
 
-  // 7) t()
-  const t = useMemo(() => {
-    return (path, fallback = "-") => pick(translations?.[locale], path) ?? fallback;
-  }, [translations, locale]);
+  const t = useMemo(
+    () => (path, fallback = "-") => pick(translations?.[locale], path) ?? fallback,
+    [translations, locale]
+  );
 
   const value = useMemo(
     () => ({
@@ -126,12 +109,12 @@ export function LanguageProvider({ children }) {
       t,
       languages: LANGS,
       savingLanguage,
-      refreshMe: bootstrap,   // дергать после логина
-      userInfoId,
-      setUserInfoId,
+      refreshMe: bootstrap, // ⬅️ вернул метод, который ждёт Profile.js
     }),
-    [locale, setLocale, t, savingLanguage, bootstrap, userInfoId]
+    [locale, setLocale, t, savingLanguage, bootstrap]
   );
 
   return <LanguageCtx.Provider value={value}>{children}</LanguageCtx.Provider>;
 }
+
+
