@@ -47,6 +47,11 @@ export default function Auth() {
   const [showPrivacy, setShowPrivacy] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
 
+  // показать/скрыть пароли
+  const [showLoginPass, setShowLoginPass] = useState(false);
+  const [showRegPass, setShowRegPass] = useState(false);
+  const [showRegPass2, setShowRegPass2] = useState(false);
+
   const [error, setError] = useState("");
 
   const [doLogin, { loading: loggingIn }] = useMutation(LOGIN);
@@ -75,14 +80,15 @@ export default function Auth() {
 
       nav.reset({ index: 0, routes: [{ name: "Sticers" }] });
     } catch (e) {
-      setError(e.message || "Login failed");
+      // setError(e.message || "Login failed");
+      setError(t("errors.loginFailed"));
     }
   };
 
   const submitRegister = async () => {
     setError("");
-    if (!agree) { setError(t("auth.agreeWith") || "Agree required"); return; }
-    if (regPass !== regPass2) { setError("Пароли не совпадают"); return; }
+    if (!agree) { setError(t("auth.errors.agreeRequired")); return; }
+    if (regPass !== regPass2) { setError(t("auth.errors.passwordsMismatch")); return; }
 
     try {
       // 1) регистрация
@@ -134,11 +140,37 @@ export default function Auth() {
       {tab === "login" ? (
         <View style={s.card}>
           <Text style={[s.label, labelAlign]}>{t("auth.email")}</Text>
-          <TextInput value={loginEmail} onChangeText={setLoginEmail} keyboardType="email-address" autoCapitalize="none"
-                     style={s.input} />
+          <TextInput 
+            value={loginEmail} 
+            onChangeText={setLoginEmail} 
+            keyboardType="email-address" 
+            autoCapitalize="none"
+            autoCorrect={false}
+            placeholder={t("auth.placeholders.email")}
+            style={s.input} 
+          />
 
           <Text style={[s.label, labelAlign]}>{t("auth.password")}</Text>
-          <TextInput value={loginPass} onChangeText={setLoginPass} secureTextEntry style={s.input} />
+          <View style={{ position: "relative" }}>
+            <TextInput
+              value={loginPass}
+              onChangeText={setLoginPass}
+              secureTextEntry={!showLoginPass}
+              autoCapitalize="none"
+              autoCorrect={false}
+              textContentType="password"
+              placeholder={t("auth.placeholders.password")}
+              style={[s.input, dir === "rtl" ? s.inputWithIconRtl : s.inputWithIcon]}
+            />
+            <TouchableOpacity
+              onPress={() => setShowLoginPass(v => !v)}
+              hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
+              style={[s.eye, dir === "rtl" && s.eyeRtl]}
+              accessibilityLabel={showLoginPass ? t("auth.hidePassword") : t("auth.showPassword")}
+            >
+              <Ionicons name={showLoginPass ? "eye" : "eye-off"} size={20} />
+            </TouchableOpacity>
+          </View>
 
           <View style={{ marginVertical: 6, flexDirection: dir === "rtl" ? "row-reverse" : "row", alignItems: "center", justifyContent: "space-between" }}>
             <Checkbox value={remember} onChange={setRemember} label={t("auth.rememberMe")} dir={dir} />
@@ -154,14 +186,58 @@ export default function Auth() {
       ) : (
         <View style={s.card}>
           <Text style={[s.label, labelAlign]}>{t("auth.email")}</Text>
-          <TextInput value={regEmail} onChangeText={setRegEmail} keyboardType="email-address" autoCapitalize="none"
-                     style={s.input} />
+          <TextInput 
+            value={regEmail} 
+            onChangeText={setRegEmail} 
+            keyboardType="email-address" 
+            autoCapitalize="none"
+            placeholder={t("auth.placeholders.email")}
+            style={s.input} 
+          />
 
           <Text style={[s.label, labelAlign]}>{t("auth.password")}</Text>
-          <TextInput value={regPass} onChangeText={setRegPass} secureTextEntry style={s.input} />
+          <View style={{ position: "relative" }}>
+            <TextInput
+              value={regPass}
+              onChangeText={setRegPass}
+              secureTextEntry={!showRegPass}
+              autoCapitalize="none"
+              autoCorrect={false}
+              textContentType="newPassword"
+              placeholder={t("auth.placeholders.password")}
+              style={[s.input, dir === "rtl" ? s.inputWithIconRtl : s.inputWithIcon]}
+            />
+            <TouchableOpacity
+              onPress={() => setShowRegPass(v => !v)}
+              hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
+              style={[s.eye, dir === "rtl" && s.eyeRtl]}
+              accessibilityLabel={showLoginPass ? t("auth.hidePassword") : t("auth.showPassword")}
+            >
+              <Ionicons name={showRegPass ? "eye" : "eye-off"} size={20} />
+            </TouchableOpacity>
+          </View>
 
           <Text style={[s.label, labelAlign]}>{t("auth.confirmPassword")}</Text>
-          <TextInput value={regPass2} onChangeText={setRegPass2} secureTextEntry style={s.input} />
+          <View style={{ position: "relative" }}>
+            <TextInput
+              value={regPass2}
+              onChangeText={setRegPass2}
+              secureTextEntry={!showRegPass2}
+              autoCapitalize="none"
+              autoCorrect={false}
+              textContentType="password"
+              placeholder={t("auth.placeholders.confirmPassword")}
+              style={[s.input, dir === "rtl" ? s.inputWithIconRtl : s.inputWithIcon]}
+            />
+            <TouchableOpacity
+              onPress={() => setShowRegPass2(v => !v)}
+              hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
+              style={[s.eye, dir === "rtl" && s.eyeRtl]}
+              accessibilityLabel={showLoginPass ? t("auth.hidePassword") : t("auth.showPassword")}
+            >
+              <Ionicons name={showRegPass2 ? "eye" : "eye-off"} size={20} />
+            </TouchableOpacity>
+          </View>
 
           {/* согласие — 3 строки */}
           <View style={{ marginTop: 6, alignItems: dir === "rtl" ? "flex-end" : "flex-start" }}>
@@ -294,4 +370,8 @@ const s = StyleSheet.create({
   },
   modalScroll: { flex: 1, zIndex: 0 },
   linkRtl: { alignSelf: "flex-end", textAlign: "right" },
+  inputWithIcon: { paddingRight: 52 },
+  inputWithIconRtl: { paddingLeft: 52 },
+  eye: { position: "absolute", right: 12, top: "50%", marginTop: -10, padding: 6 },
+  eyeRtl: { right: "auto", left: 12 },
 });
