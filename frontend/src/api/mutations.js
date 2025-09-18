@@ -58,3 +58,16 @@ export const CREATE_USER_INFO = gql`
     }
   }
 `;
+
+
+// ✅ Устанавливаем ВЕСЬ массив связей (без connect)
+export const SET_USERINFO_NOTIFICATIONS = gql`
+  mutation SetUserInfoNotifications($userInfoId: ID!, $notifications: [ID]!) {
+    updateUserInfo(
+      documentId: $userInfoId
+      data: { notifications: $notifications }
+    ) {
+      documentId
+    }
+  }
+`;

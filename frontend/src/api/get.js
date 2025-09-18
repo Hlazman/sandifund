@@ -75,3 +75,34 @@ export const GET_MY_USER_INFO = gql`
     }
   }
 `;
+
+
+// === получить все уведомления (до 250 штук) ===
+export const GET_NOTIFICATIONS = gql`
+  query Notifications($pagination: PaginationArg, $locale: I18NLocaleCode) {
+    notifications(pagination: $pagination, locale: $locale) {
+      isRead
+      isMass
+      documentId
+      title
+      text
+      locale
+      link
+      publishedAt
+    }
+  }
+`;
+
+// === получить список ПРОЧИТАННЫХ пользователем (по user_info) ===
+export const GET_MY_READ_NOTIFICATIONS = gql`
+  query MyReadNotifs($pagination: PaginationArg) {
+    meFull {
+      user_info {
+        documentId
+        notifications(pagination: $pagination) {
+          documentId
+        }
+      }
+    }
+  }
+`;
