@@ -9,11 +9,7 @@
   "options": {
     "draftAndPublish": false
   },
-  "pluginOptions": {
-    "i18n": {
-      "localized": true
-    }
-  },
+  "pluginOptions": {},
   "attributes": {
     "user": {
       "type": "relation",
@@ -23,11 +19,6 @@
     },
     "language": {
       "type": "enumeration",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      },
       "enum": [
         "en",
         "he",
@@ -37,21 +28,11 @@
     },
     "donationSum": {
       "type": "decimal",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      },
       "default": 0,
       "min": 0
     },
     "avatar": {
       "type": "media",
-      "pluginOptions": {
-        "i18n": {
-          "localized": false
-        }
-      },
       "multiple": false,
       "allowedTypes": [
         "images"
@@ -59,11 +40,6 @@
     },
     "isActive": {
       "type": "boolean",
-      "pluginOptions": {
-        "i18n": {
-          "localized": false
-        }
-      },
       "default": true
     },
     "products": {
