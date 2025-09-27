@@ -13,6 +13,7 @@ import LanguageSelect from "../components/LanguageSelect";
 import Terms from "./Terms";
 import Privacy from "./Privacy";
 
+
 export default function Auth() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -62,23 +63,39 @@ export default function Auth() {
         variables: { identifier: loginEmail.trim(), password: loginPass },
       });
       const token = data?.login?.jwt;
-      if (!token) throw new Error("No JWT returned");
+      if (!token) throw new Error("No JWT");
 
       loginWithToken(token, remember);
       await apollo.clearStore();
 
-      // Обновим язык в уже существующем UserInfo (если есть)
       try {
+        // 1) пробуем получить существующий user_info
         const meFull = await apollo.query({ query: GET_MY_USER_INFO, fetchPolicy: "network-only" });
-        const ui = meFull?.data?.meFull?.user_info;
+        let ui = meFull?.data?.meFull?.user_info;
+
         if (ui?.documentId) {
           localStorage.setItem("sf_userInfoId", ui.documentId);
-          await updateUserInfo({ variables: { documentId: ui.documentId, data: { language: selectedLang } } });
+          await updateUserInfo({
+            variables: { documentId: ui.documentId, data: { language: selectedLang } },
+          });
+        } else {
+          // 2) если нет — создаём UserInfo
+          const me = await apollo.query({ query: GET_ME, fetchPolicy: "network-only" });
+          const userDocId = me?.data?.me?.documentId;
+          if (userDocId) {
+            const created = await createUserInfo({
+              variables: { data: { user: userDocId, language: selectedLang } },
+            });
+            const newId = created?.data?.createUserInfo?.documentId;
+            if (newId) localStorage.setItem("sf_userInfoId", newId);
+          }
         }
-      } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
 
       navigate(redirectAfterLogin, { replace: true });
-    } catch (err) {
+    } catch {
       setSubmitError(t("errors.loginFailed"));
     }
   };
@@ -94,9 +111,15 @@ export default function Auth() {
       const { data } = await doRegister({
         variables: { username: regEmail.trim(), email: regEmail.trim(), password: regPass },
       });
-      const token = data?.register?.jwt;
-      if (!token) throw new Error("No JWT after register");
 
+      const token = data?.register?.jwt;
+
+      if (!token) {
+        navigate("/check-email", { replace: true, state: { email: regEmail.trim() } });
+        return;
+      }
+
+      // Если JWT есть (confirmation OFF) — как раньше:
       loginWithToken(token, true);
       await apollo.clearStore();
 
@@ -111,10 +134,11 @@ export default function Auth() {
       if (userInfoId) localStorage.setItem("sf_userInfoId", userInfoId);
 
       navigate("/payment", { replace: true });
-    } catch (err) {
+    } catch {
       setSubmitError(t("errors.registerFailed"));
     }
   };
+
 
   return (
     <div className="max-w-md mx-auto p-6">
@@ -176,7 +200,8 @@ export default function Auth() {
                 <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
                 {t("auth.rememberMe")}
               </label>
-              <Link to="#" className="text-sm text-indigo-600 hover:underline">
+              {/* <Link to="#" className="text-sm text-indigo-600 hover:underline"> */}
+              <Link to="/forgot" className="text-sm text-indigo-600 hover:underline">
                 {t("auth.forgotPassword")}
               </Link>
             </div>
