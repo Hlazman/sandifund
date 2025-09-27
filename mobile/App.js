@@ -21,6 +21,10 @@ import Fonds from "./src/screens/Fonds";
 import Goods from "./src/screens/Goods";
 import FAQ from "./src/screens/FAQ";
 import Orders from "./src/screens/Orders";
+import ForgotPassword from "./src/screens/ForgotPassword";
+import ResetPassword from "./src/screens/ResetPassword";
+import EmailConfirmation from "./src/screens/EmailConfirmation";
+import CheckEmail from "./src/screens/CheckEmail";
 
 // неавторизованные
 import Auth from "./src/screens/Auth";
@@ -44,6 +48,16 @@ const linking = {
       Terms: "terms",
       Privacy: "privacy",
       Auth: "auth",
+      ForgotPassword: "forgot-password",
+      ResetPassword: {
+        path: "reset-password",
+        parse: { code: (v) => v },
+      },
+      EmailConfirmation: {
+        path: "email-confirmation",
+        parse: { confirmation: (v) => v },
+      },
+      CheckEmail: "check-email",
     },
   },
 };
@@ -70,6 +84,10 @@ function UnauthedStack() {
       <Stack.Screen name="Auth" component={Auth} />
       <Stack.Screen name="Terms" component={Terms} />
       <Stack.Screen name="Privacy" component={Privacy} />
+      <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+      <Stack.Screen name="ResetPassword" component={ResetPassword} />
+      <Stack.Screen name="EmailConfirmation" component={EmailConfirmation} />
+      <Stack.Screen name="CheckEmail" component={CheckEmail} />
     </Stack.Navigator>
   );
 }

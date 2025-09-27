@@ -68,13 +68,30 @@ export default function Auth() {
 
       await loginWithToken(token);
 
-      // если есть UserInfo — обновим там язык
+      // // если есть UserInfo — обновим там язык
+      // try {
+      //   const res = await apollo.query({ query: GET_MY_USER_INFO, fetchPolicy: "network-only" });
+      //   const ui = res?.data?.meFull?.user_info;
+      //   if (ui?.documentId) {
+      //     globalThis.sf_userInfoId = ui.documentId;
+      //     await updateUserInfo({ variables: { documentId: ui.documentId, data: { language: selectedLang } } });
+      //   }
+      // } catch {}
+
       try {
         const res = await apollo.query({ query: GET_MY_USER_INFO, fetchPolicy: "network-only" });
-        const ui = res?.data?.meFull?.user_info;
+        let ui = res?.data?.meFull?.user_info;
         if (ui?.documentId) {
           globalThis.sf_userInfoId = ui.documentId;
           await updateUserInfo({ variables: { documentId: ui.documentId, data: { language: selectedLang } } });
+        } else {
+          const me = await apollo.query({ query: GET_ME, fetchPolicy: "network-only" });
+          const userDocId = me?.data?.me?.documentId;
+          if (userDocId) {
+            const created = await createUserInfo({ variables: { data: { user: userDocId, language: selectedLang } } });
+            const newId = created?.data?.createUserInfo?.documentId;
+            if (newId) globalThis.sf_userInfoId = newId;
+          }
         }
       } catch {}
 
@@ -96,7 +113,12 @@ export default function Auth() {
         variables: { username: regEmail.trim(), email: regEmail.trim(), password: regPass },
       });
       const token = data?.register?.jwt;
-      if (!token) throw new Error("No JWT after register");
+      // if (!token) throw new Error("No JWT after register");
+
+      if (!token) {
+        nav.replace("CheckEmail", { email: regEmail.trim() });
+        return;
+      }
 
       await loginWithToken(token);
 
@@ -174,7 +196,11 @@ export default function Auth() {
 
           <View style={{ marginVertical: 6, flexDirection: dir === "rtl" ? "row-reverse" : "row", alignItems: "center", justifyContent: "space-between" }}>
             <Checkbox value={remember} onChange={setRemember} label={t("auth.rememberMe")} dir={dir} />
-            <TouchableOpacity><Text style={{ color: "#2563eb" }}>{t("auth.forgotPassword")}</Text></TouchableOpacity>
+            {/* <TouchableOpacity><Text style={{ color: "#2563eb" }}>{t("auth.forgotPassword")}</Text></TouchableOpacity> */}
+
+            <TouchableOpacity onPress={() => nav.navigate("ForgotPassword")}>
+              <Text style={{ color: "#2563eb" }}>{t("auth.forgotPassword")}</Text>
+            </TouchableOpacity>           
           </View>
 
           {error ? <Text style={s.error}>{error}</Text> : null}
