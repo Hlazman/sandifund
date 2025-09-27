@@ -61,6 +61,8 @@
 //   );
 // }
 
+
+// TODO удалить этот код и разкоментировать тот что вверху, когда запустится в прод 
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";

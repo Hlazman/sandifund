@@ -33,6 +33,7 @@
 // }
 
 
+// TODO удалить этот код и разкоментировать тот что вверху, когда запустится в прод
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
