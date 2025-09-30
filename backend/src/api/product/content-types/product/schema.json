@@ -87,6 +87,21 @@
       "relation": "manyToOne",
       "target": "api::user-info.user-info",
       "inversedBy": "products"
+    },
+    "state": {
+      "type": "enumeration",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "default": "notValid",
+      "enum": [
+        "inStock",
+        "sold",
+        "notValid",
+        "booked"
+      ]
     }
   }
 }
