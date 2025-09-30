@@ -71,15 +71,18 @@
       "relation": "oneToMany",
       "target": "api::fund.fund"
     },
-    "stickerPacks": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::sticker-pack.sticker-pack"
-    },
     "subscriptions": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::subscription.subscription"
+    },
+    "isMaster": {
+      "type": "boolean",
+      "default": false
+    },
+    "isFree": {
+      "type": "boolean",
+      "default": false
     }
   }
 }
