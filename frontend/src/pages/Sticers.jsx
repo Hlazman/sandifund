@@ -1,29 +1,16 @@
-
-// import React from "react";
-// import Card from "../components/Card";
-
-// export default function Sticers() {
-//   return (
-//     <div className="max-w-5xl mx-auto p-4">
-//       <Card title="Sticers (Главная)">
-//         <p className="text-sm opacity-80">
-//           Здесь будет логика стикеров и подписок.
-//         </p>
-//       </Card>
-//     </div>
-//   );
-// }
-
 import React from "react";
-import Card from "../components/Card";
 import { Link } from "react-router-dom";
+import Card from "../components/Card";
+import { useLanguage } from "../context/LanguageContext";
 
 function randomItem(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
 export default function Sticers() {
-  // Рандомные данные (мемоизируем, чтобы не прыгали при ререндере)
+  const { t } = useLanguage();
+
+  // фиксируем "рандом", чтобы значения не прыгали при ререндере
   const [seed] = React.useState(() => Math.random().toString(36).slice(2, 8));
 
   const product = React.useMemo(() => {
@@ -35,20 +22,23 @@ export default function Sticers() {
       "Strong stitches and comfy long straps.",
       "Soft, warm and breathable. Unisex.",
     ];
-    const statuses = ["в наличии", "забронировано", "куплено"];
+    const statuses = ["В наличии", "Забронировано", "Куплено"];
     const prices = [149, 199, 249, 299, 349];
     const donations = [5, 10, 12, 15];
 
     return {
-      title: randomItem(titles) + " #" + seed.toUpperCase(),
+      variant: "product",
+      title: `${randomItem(titles)} #${seed.toUpperCase()}`,
       description: randomItem(descs),
       price: randomItem(prices),
       donationPercent: randomItem(donations),
       status: randomItem(statuses),
       master: { name: "Anna Master", href: "/masters" },
-      image: null, // как просили — вместо изображения "no image"
+      image: null, // плейсхолдер "no image"
+      onReserve: () => window.alert("Бронирование: заявка отправлена (демо)"),
+      reserveLabel: t("card.product.reserve") || "Забронировать",
     };
-  }, [seed]);
+  }, [seed, t]);
 
   const fund = React.useMemo(() => {
     const titles = ["Helping Hands", "Bright Future", "Care & Share", "Sunrise Foundation", "Kind Hearts"];
@@ -63,6 +53,7 @@ export default function Sticers() {
     const totals = [2500, 7630, 12000, 540, 90550];
 
     return {
+      variant: "fund",
       title: randomItem(titles),
       description: randomItem(descs),
       email: "info@sandifund.org",
@@ -72,7 +63,7 @@ export default function Sticers() {
       whatsapp: "+972 541112233",
       totalDonations: randomItem(totals),
       website: "https://example.org",
-      reports: { href: "/reports", label: "Reports" },
+      reports: { href: "/reports" }, // кнопка возьмёт текст из i18n: card.fund.reports
       logo: null, // плейсхолдер
     };
   }, []);
@@ -87,26 +78,29 @@ export default function Sticers() {
       "Spread positivity in your messages.",
     ];
     return {
+      variant: "sticker",
       title: randomItem(titles),
       description: randomItem(descs),
       image: null, // плейсхолдер
-      link: "#",
+      link: "https://example.org/stickers", // кнопка возьмёт текст из i18n: card.sticker.openLink
     };
   }, []);
 
   return (
     <div className="max-w-6xl mx-auto p-4">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Sticers (демо карточек)</h1>
+        <h1 className="text-2xl font-semibold">
+          {t("header.items.sticers") || "Sticers"}
+        </h1>
         <Link className="text-sm text-indigo-600 hover:underline" to="/funds">
-          → к списку фондов
+          {t("header.items.funds") || "Funds"}
         </Link>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Card variant="product" {...product} />
-        <Card variant="fund" {...fund} />
-        <Card variant="sticker" {...sticker} />
+        <Card {...product} />
+        <Card {...fund} />
+        <Card {...sticker} />
       </div>
     </div>
   );
