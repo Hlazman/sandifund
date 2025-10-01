@@ -77,7 +77,15 @@ export default function NotificationsModal({ visible, onClose, isAuthed }) {
     return s;
   }, [readIdsFromServer, locallyRead]);
 
-  const items = React.useMemo(() => allData?.notifications ?? [], [allData]);
+  // const items = React.useMemo(() => allData?.notifications ?? [], [allData]);
+  const items = React.useMemo(() => {
+    const list = allData?.notifications ?? [];
+    return [...list].sort((a, b) => {
+      const at = a?.publishedAt ? Date.parse(a.publishedAt) : 0;
+      const bt = b?.publishedAt ? Date.parse(b.publishedAt) : 0;
+      return bt - at; // DESC: новые сверху
+    });
+  }, [allData]);
 
   const [setUserInfoNotifications] = useMutation(SET_USERINFO_NOTIFICATIONS, {
     onError: (e) => console.warn("Failed to persist read notifications:", e?.message || e),
