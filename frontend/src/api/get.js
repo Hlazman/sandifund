@@ -37,6 +37,7 @@ export const GET_MY_USER_INFO = gql`
       user_info {
         documentId
         language
+        createdAt
       }
     }
   }
@@ -65,6 +66,8 @@ export const GET_MY_READ_NOTIFICATIONS = gql`
     meFull {
       user_info {
         documentId
+        language
+        createdAt
         notifications(pagination: $pagination) {
           documentId
         }

@@ -83,7 +83,17 @@ export default function NotificationsPanel() {
   }, [readIdsFromServer, locallyRead]);
 
   // Список по текущей локали (отдаётся сервером уже отфильтрованным)
-  const items = React.useMemo(() => allData?.notifications ?? [], [allData]);
+  // const items = React.useMemo(() => allData?.notifications ?? [], [allData]);
+    
+  // Список по текущей локали → СОРТИРОВКА: новые сверху
+  const items = React.useMemo(() => {
+    const list = allData?.notifications ?? [];
+    return [...list].sort((a, b) => {
+      const at = a?.publishedAt ? Date.parse(a.publishedAt) : 0;
+      const bt = b?.publishedAt ? Date.parse(b.publishedAt) : 0;
+      return bt - at; // DESC
+    });
+  }, [allData]);
 
   // Badge: непрочитанные ТЕКУЩЕЙ ЛОКАЛИ
   const unreadCount = React.useMemo(
