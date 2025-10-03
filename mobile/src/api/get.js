@@ -39,6 +39,10 @@ export const GET_ME = gql`
       documentId
       email
       username
+      role {
+        name
+        type
+      }
     }
   }
 `;
@@ -73,7 +77,8 @@ export const GET_MY_READ_NOTIFICATIONS = gql`
     meFull {
       user_info {
         documentId
-        language        # ⬅️ добавили язык пользователя
+        language
+        createdAt
         notifications(pagination: $pagination) {
           documentId
         }

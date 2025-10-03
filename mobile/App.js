@@ -79,25 +79,6 @@ function useRoleNames() {
   return roleNames;
 }
 
-// простой guard по ролям
-function RequireRoles({ allowed = [], children }) {
-  const roleNames = useRoleNames();
-  const ok = allowed.length === 0 || allowed.some((a) => roleNames.includes(a.toLowerCase()));
-  if (ok) return children;
-  return (
-    <SafeAreaView style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#fff" }}>
-      <View style={{ padding: 16 }}>
-        <Text style={{ fontSize: 16, fontWeight: "600", color: "#111827", textAlign: "center" }}>
-          Access restricted
-        </Text>
-        <Text style={{ marginTop: 6, fontSize: 14, color: "#6b7280", textAlign: "center" }}>
-          Your role doesn’t allow opening this screen.
-        </Text>
-      </View>
-    </SafeAreaView>
-  );
-}
-
 function AuthedStack() {
   return (
     <Stack.Navigator screenOptions={{ header: ({ navigation }) => <Header navigation={navigation} /> }}>
@@ -115,24 +96,8 @@ function AuthedStack() {
       <Stack.Screen name="FAQ" component={FAQ} />
       <Stack.Screen name="Terms" component={Terms} />
       <Stack.Screen name="Privacy" component={Privacy} />
-
-      {/* Ролевые экраны */}
-      <Stack.Screen name="MyGoods">
-        {() => (
-          <RequireRoles allowed={["free", "masters", "authenticated"]}>
-            <MyGoods />
-          </RequireRoles>
-        )}
-      </Stack.Screen>
-
-      <Stack.Screen name="Orders">
-        {() => (
-          <RequireRoles allowed={["free", "authenticated"]}>
-            <Orders />
-          </RequireRoles>
-        )}
-      </Stack.Screen>
-
+      <Stack.Screen name="MyGoods" component={MyGoods} />
+      <Stack.Screen name="Orders" component={Orders} />
       {/* Не в меню */}
       <Stack.Screen name="Reports" component={Reports} />
     </Stack.Navigator>

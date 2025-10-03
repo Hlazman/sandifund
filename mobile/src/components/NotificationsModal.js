@@ -5,9 +5,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useLanguage } from "../context/LanguageContext";
-import { useQuery, useMutation, useApolloClient } from "@apollo/client/react";
-import { GET_NOTIFICATIONS, GET_MY_READ_NOTIFICATIONS } from "../api/get";
+import { useMutation, useApolloClient } from "@apollo/client/react";
+import { GET_MY_READ_NOTIFICATIONS } from "../api/get"; // нужен только для cache.updateQuery
 import { SET_USERINFO_NOTIFICATIONS } from "../api/mutations";
+import useUserNotifications from "../hooks/useUserNotifications";
 
 function formatPublished(iso, locale) {
   try {
@@ -48,44 +49,18 @@ export default function NotificationsModal({ visible, onClose, isAuthed }) {
   const pendingRef = React.useRef(new Set());
   const flushTimerRef = React.useRef(null);
 
-  // 1) user_info: язык + прочитанные
-  const { data: mineData, loading: mineLoading } = useQuery(GET_MY_READ_NOTIFICATIONS, {
-    variables: { pagination: { limit: 250 } },
-    fetchPolicy: "cache-and-network",
-    notifyOnNetworkStatusChange: true,
-    skip: !visible || !isAuthed,
-  });
-  const userLang = mineData?.meFull?.user_info?.language || ctxLocale;
-
-  // 2) уведомления — только с userLang (не дёргаем en по умолчанию)
-  const { data: allData, loading: allLoading } = useQuery(GET_NOTIFICATIONS, {
-    variables: { pagination: { limit: 250 }, locale: userLang },
-    fetchPolicy: "cache-and-network",
-    skip: !visible || !isAuthed || mineLoading,
+  const { isLoading, items, userLang, readIdsFromServer, userInfoId, } = useUserNotifications({
+    isAuthed,
+    visible,
+    ctxLocale,
   });
 
-  const userInfoId = mineData?.meFull?.user_info?.documentId || null;
-
-  const readIdsFromServer = React.useMemo(() => {
-    const arr = mineData?.meFull?.user_info?.notifications || [];
-    return new Set(arr.map((n) => n.documentId));
-  }, [mineData]);
-
+  // Эффективно «прочитано» = (серверные) ∪ (локально помеченные в этой сессии)
   const effectiveReadIds = React.useMemo(() => {
     const s = new Set(readIdsFromServer);
     for (const id of locallyRead) s.add(id);
     return s;
   }, [readIdsFromServer, locallyRead]);
-
-  // const items = React.useMemo(() => allData?.notifications ?? [], [allData]);
-  const items = React.useMemo(() => {
-    const list = allData?.notifications ?? [];
-    return [...list].sort((a, b) => {
-      const at = a?.publishedAt ? Date.parse(a.publishedAt) : 0;
-      const bt = b?.publishedAt ? Date.parse(b.publishedAt) : 0;
-      return bt - at; // DESC: новые сверху
-    });
-  }, [allData]);
 
   const [setUserInfoNotifications] = useMutation(SET_USERINFO_NOTIFICATIONS, {
     onError: (e) => console.warn("Failed to persist read notifications:", e?.message || e),
@@ -166,7 +141,7 @@ export default function NotificationsModal({ visible, onClose, isAuthed }) {
             </TouchableOpacity>
           </View>
 
-          {allLoading || mineLoading ? (
+          {isLoading ? (
             <View style={styles.stateBox}><Text style={styles.stateText}>{t("notifications.loading") || "Loading…"}</Text></View>
           ) : items.length === 0 ? (
             <View style={styles.stateBox}><Text style={styles.stateText}>{t("notifications.empty") || "No notifications"}</Text></View>
