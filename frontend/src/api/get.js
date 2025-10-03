@@ -26,6 +26,10 @@ export const GET_ME = gql`
       email
       username
       confirmed
+      role {
+        name
+        type
+      }
     }
   }
 `;

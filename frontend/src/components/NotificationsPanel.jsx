@@ -75,6 +75,14 @@ export default function NotificationsPanel() {
     return new Set(arr.map((n) => n.documentId));
   }, [mineData]);
 
+  // TS регистрации пользователя (из user_info.createdAt)
+  const hasRegisteredAt = Boolean(mineData?.meFull?.user_info?.createdAt);
+  const registeredAtTs = React.useMemo(() => {
+    return hasRegisteredAt ? Date.parse(mineData.meFull.user_info.createdAt) : null;
+  }, [hasRegisteredAt, mineData]);
+
+  const isLoading = allLoading || mineLoading || !hasRegisteredAt;
+
   // Эффективно прочитанные = сервер + локально помеченные
   const effectiveReadIds = React.useMemo(() => {
     const s = new Set(readIdsFromServer);
@@ -86,14 +94,32 @@ export default function NotificationsPanel() {
   // const items = React.useMemo(() => allData?.notifications ?? [], [allData]);
     
   // Список по текущей локали → СОРТИРОВКА: новые сверху
-  const items = React.useMemo(() => {
-    const list = allData?.notifications ?? [];
-    return [...list].sort((a, b) => {
-      const at = a?.publishedAt ? Date.parse(a.publishedAt) : 0;
-      const bt = b?.publishedAt ? Date.parse(b.publishedAt) : 0;
-      return bt - at; // DESC
-    });
-  }, [allData]);
+  // const items = React.useMemo(() => {
+  //   const list = allData?.notifications ?? [];
+  //   return [...list].sort((a, b) => {
+  //     const at = a?.publishedAt ? Date.parse(a.publishedAt) : 0;
+  //     const bt = b?.publishedAt ? Date.parse(b.publishedAt) : 0;
+  //     return bt - at; // DESC
+  //   });
+  // }, [allData]);
+
+const items = React.useMemo(() => {
+  if (isLoading) return []; // пока не знаем createdAt, ничего не показываем
+  const list = allData?.notifications ?? [];
+
+  const filtered = registeredAtTs
+    ? list.filter((n) => {
+        const pt = n?.publishedAt ? Date.parse(n.publishedAt) : 0;
+        return pt >= registeredAtTs;
+      })
+    : list;
+
+  return [...filtered].sort((a, b) => {
+    const at = a?.publishedAt ? Date.parse(a.publishedAt) : 0;
+    const bt = b?.publishedAt ? Date.parse(b.publishedAt) : 0;
+    return bt - at; // новые сверху
+  });
+}, [isLoading, allData, registeredAtTs]);
 
   // Badge: непрочитанные ТЕКУЩЕЙ ЛОКАЛИ
   const unreadCount = React.useMemo(
@@ -102,10 +128,16 @@ export default function NotificationsPanel() {
   );
 
   // Показывать бэйдж — только когда обе выборки готовы
+  // const showBadge = React.useMemo(
+  //   () => !allLoading && !mineLoading && unreadCount > 0,
+  //   [allLoading, mineLoading, unreadCount]
+  // );
+
   const showBadge = React.useMemo(
-    () => !allLoading && !mineLoading && unreadCount > 0,
-    [allLoading, mineLoading, unreadCount]
+    () => !isLoading && unreadCount > 0,
+    [isLoading, unreadCount]
   );
+
 
   const [setUserInfoNotifications] = useMutation(SET_USERINFO_NOTIFICATIONS, {
     onError: (e) => {
@@ -202,7 +234,8 @@ export default function NotificationsPanel() {
             <ChevronDown className="w-4 h-4 opacity-50" />
           </div>
 
-          {allLoading ? (
+          {/* {allLoading ? ( */}
+          {isLoading ? (
             <div className="p-4 text-sm opacity-70">
               {t("notifications.loading") || "Loading…"}
             </div>
