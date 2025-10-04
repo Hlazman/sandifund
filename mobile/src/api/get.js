@@ -86,3 +86,34 @@ export const GET_MY_READ_NOTIFICATIONS = gql`
     }
   }
 `;
+
+export const GET_FUNDS = gql`
+  query Funds($pagination: PaginationArg, $locale: I18NLocaleCode) {
+    funds(pagination: $pagination, locale: $locale) {
+      address
+      description
+      documentId
+      email
+      locale
+      logo { documentId url }
+      phone1
+      phone2
+      title
+      totalDonations
+      website
+      whatsapp
+    }
+  }
+`;
+
+export const GET_REPORTS = gql`
+  query Reports($filters: ReportFiltersInput, $pagination: PaginationArg, $locale: I18NLocaleCode) {
+    reports(filters: $filters, pagination: $pagination, locale: $locale) {
+      documentId
+      pdf { url documentId }
+      sum
+      title
+      locale
+    }
+  }
+`;

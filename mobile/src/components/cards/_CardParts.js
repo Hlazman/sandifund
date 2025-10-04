@@ -85,8 +85,8 @@ export const Field = ({ label, value, onPress, href }) => {
     }
   };
   return (
-    <View style={{ flexDirection: "row", alignItems: "flex-start", marginTop: 6 }}>
-      <Text style={{ color: "#6b7280", marginRight: 6 }}>{label}:</Text>
+    <View style={{ flexDirection: "row", alignItems: "flex-start", marginTop: 12 }}>
+      <Text style={{ color: "#6b7280", marginRight: 12 }}>{label}:</Text>
       {tappable ? (
         <Pressable onPress={open}>
           <Text style={{ color: "#4f46e5" }}>{value}</Text>
@@ -98,7 +98,7 @@ export const Field = ({ label, value, onPress, href }) => {
   );
 };
 
-export const Button = ({ title, onPress }) => (
+export const Button = ({ title, onPress, fullWidth }) => (
   <Pressable
     onPress={onPress}
     style={({ pressed }) => ({
@@ -106,10 +106,11 @@ export const Button = ({ title, onPress }) => (
       paddingVertical: 10,
       paddingHorizontal: 14,
       borderRadius: 12,
-      alignSelf: "flex-start",
+      alignSelf: fullWidth ? "stretch" : "flex-start",
+      justifyContent: "center",
     })}
   >
-    <Text style={{ color: "#fff", fontWeight: "600" }}>{title}</Text>
+    <Text style={{ color: "#fff", fontWeight: "600", textAlign: "center" }}>{title}</Text>
   </Pressable>
 );
 

@@ -36,6 +36,10 @@ export default function CardFund(props) {
       : `https://wa.me/${whatsapp.replace(/[^\d]/g, "")}`
     : undefined;
 
+    const mapsHref = address
+      ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
+      : undefined;
+
   return (
     <CardWrap>
       <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -77,14 +81,16 @@ export default function CardFund(props) {
         <Field label={L("card.fund.email", "Email")} value={email} href={email ? `mailto:${email}` : undefined} />
         <Field label={L("card.fund.phone1", "Phone 1")} value={phone1} href={phone1 ? `tel:${phone1}` : undefined} />
         <Field label={L("card.fund.phone2", "Phone 2")} value={phone2} href={phone2 ? `tel:${phone2}` : undefined} />
-        <Field label={L("card.fund.address", "Address")} value={address} />
         <Field label={L("card.fund.whatsapp", "WhatsApp")} value={whatsapp} href={waHref} />
+        {/* <Field label={L("card.fund.address", "Address")} value={address} /> */}
+        <Field label={L("card.fund.address", "Address")} value={address} href={mapsHref} />
         <Field label={L("card.fund.website", "Website")} value={website} href={website} />
       </View>
 
       {reports ? (
         <View style={{ marginTop: 10 }}>
           <Button
+            fullWidth
             title={reports.label || L("card.fund.reports", "Reports")}
             onPress={() => {
               if (reports.screen && typeof onNavigate === "function") {
