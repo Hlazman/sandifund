@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Card from "../components/Card";
+import CardProduct from "../components/cards/CardProduct";
+import CardFund from "../components/cards/CardFund";
+import CardSticker from "../components/cards/CardSticker";
 import { useLanguage } from "../context/LanguageContext";
 
 function randomItem(arr) {
@@ -10,7 +12,7 @@ function randomItem(arr) {
 export default function Sticers() {
   const { t } = useLanguage();
 
-  // фиксируем "рандом", чтобы значения не прыгали при ререндере
+  // фиксируем seed, чтобы демо-значения не прыгали при каждом рендере
   const [seed] = React.useState(() => Math.random().toString(36).slice(2, 8));
 
   const product = React.useMemo(() => {
@@ -27,14 +29,13 @@ export default function Sticers() {
     const donations = [5, 10, 12, 15];
 
     return {
-      variant: "product",
       title: `${randomItem(titles)} #${seed.toUpperCase()}`,
       description: randomItem(descs),
       price: randomItem(prices),
       donationPercent: randomItem(donations),
       status: randomItem(statuses),
       master: { name: "Anna Master", href: "/masters" },
-      image: null, // плейсхолдер "no image"
+      image: null,
       onReserve: () => window.alert("Бронирование: заявка отправлена (демо)"),
       reserveLabel: t("card.product.reserve") || "Забронировать",
     };
@@ -53,7 +54,6 @@ export default function Sticers() {
     const totals = [2500, 7630, 12000, 540, 90550];
 
     return {
-      variant: "fund",
       title: randomItem(titles),
       description: randomItem(descs),
       email: "info@sandifund.org",
@@ -63,8 +63,8 @@ export default function Sticers() {
       whatsapp: "+972 541112233",
       totalDonations: randomItem(totals),
       website: "https://example.org",
-      reports: { href: "/reports" }, // кнопка возьмёт текст из i18n: card.fund.reports
-      logo: null, // плейсхолдер
+      reports: { href: "/reports" },
+      logo: null,
     };
   }, []);
 
@@ -78,11 +78,10 @@ export default function Sticers() {
       "Spread positivity in your messages.",
     ];
     return {
-      variant: "sticker",
       title: randomItem(titles),
       description: randomItem(descs),
-      image: null, // плейсхолдер
-      link: "https://example.org/stickers", // кнопка возьмёт текст из i18n: card.sticker.openLink
+      image: null,
+      link: "https://example.org/stickers",
     };
   }, []);
 
@@ -98,9 +97,9 @@ export default function Sticers() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Card {...product} />
-        <Card {...fund} />
-        <Card {...sticker} />
+        <CardProduct {...product} />
+        <CardFund {...fund} />
+        <CardSticker {...sticker} />
       </div>
     </div>
   );
