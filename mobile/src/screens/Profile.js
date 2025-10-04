@@ -1,20 +1,6 @@
-// import React from "react";
-// import { View, Text } from "react-native";
-
-// export default function Profile() {
-//   return (
-//     <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 12 }}>
-//       <Text style={{ fontSize: 22, fontWeight: "700" }}>Profile</Text>
-//     </View>
-//   );
-// }
-
-////////////////////////////////////////////////////////////////////////////////
-
 import React, { useEffect, useState } from "react";
 import { View, Text, ActivityIndicator } from "react-native";
 import { useQuery, useMutation } from "@apollo/client/react";
-import Card from "../components/Card";
 import { GET_STICKERS } from "../api/get";
 import { LOGIN } from "../api/mutations";
 import { useLanguage } from "../context/LanguageContext";
@@ -83,7 +69,6 @@ export default function Profile() {
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 12 }}>
-      <Card title="Profile">
         <View style={{ marginBottom: 12 }}>
           <Text style={{ marginBottom: 6 }}>Language</Text>
           <LanguageSelect />
@@ -148,7 +133,6 @@ export default function Profile() {
             <Text style={{ opacity: 0.7 }}>Нет данных для выбранной локали.</Text>
           )}
         </View>
-      </Card>
     </View>
   );
 }
