@@ -1,0 +1,18 @@
+{
+  "kind": "singleType",
+  "collectionName": "jsons",
+  "info": {
+    "singularName": "json",
+    "pluralName": "jsons",
+    "displayName": "JSON"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "data": {
+      "type": "json"
+    }
+  }
+}
