@@ -7,7 +7,6 @@ import { useLanguage } from "../context/LanguageContext";
 import CardFund from "../components/cards/CardFund";
 
 function slateToText(nodes) {
-  // Простой plain-text из Slate JSON [{type:'paragraph', children:[{text:'...'}]}]
   if (!Array.isArray(nodes)) return "";
   return nodes
     .map((n) =>
@@ -23,11 +22,8 @@ export default function Fonds() {
   const navigation = useNavigation();
   const { t, locale } = useLanguage();
 
-  const { data, loading, error, refetch } = useQuery(GET_FUNDS, {
-    variables: {
-      locale,
-      pagination: { limit: 100 },
-    },
+  const { data, loading, error } = useQuery(GET_FUNDS, {
+    variables: { locale, pagination: { limit: 100 } },
     fetchPolicy: "cache-and-network",
   });
 
@@ -92,6 +88,11 @@ export default function Fonds() {
             whatsapp={f.whatsapp}
             totalDonations={typeof f.totalDonations === "number" ? f.totalDonations : undefined}
             website={f.website}
+            facebook={f.Facebook}
+            instagram={f.Instagram}
+            tiktok={f.TikTok}
+            youtube={f.YouTube}
+            twitter={f.Twitter}
             reports={{ label: t("card.fund.reports") || "Reports", screen: "Reports" }}
             onNavigate={(screen) =>
               navigation.navigate(screen, { fundId: f.documentId, fundTitle: f.title })

@@ -9,16 +9,6 @@ export const GET_TRANSLATIONS = gql`
   }
 `;
 
-// Локализованный контент (пример: stickers)
-export const GET_STICKERS = gql`
-  query Stickers($locale: I18NLocaleCode) {
-    stickers(locale: $locale) {
-      title
-      description
-    }
-  }
-`;
-
 // Полные данные текущего пользователя с привязкой к UserInfo (meFull → user_info)
 export const GET_MY_USER_INFO = gql`
   query MyUserInfo {
@@ -102,6 +92,11 @@ export const GET_FUNDS = gql`
       totalDonations
       website
       whatsapp
+      Facebook
+      Instagram
+      TikTok
+      YouTube
+      Twitter
     }
   }
 `;
@@ -114,6 +109,33 @@ export const GET_REPORTS = gql`
       sum
       title
       locale
+    }
+  }
+`;
+
+// Stickers (с локалью, картинкой и zip)
+export const GET_STICKERS = gql`
+  query Stickers($locale: I18NLocaleCode) {
+    stickers(locale: $locale) {
+      documentId
+      title
+      description
+      locale
+      image { documentId url }
+      zipFile { documentId url }
+      zipFileUrl
+    }
+  }
+`;
+
+// FAQ
+export const GET_FAQS = gql`
+  query Faqs($pagination: PaginationArg, $locale: I18NLocaleCode) {
+    faqs(pagination: $pagination, locale: $locale) {
+      documentId
+      locale
+      question
+      answerFofmated
     }
   }
 `;

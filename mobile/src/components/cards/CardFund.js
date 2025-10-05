@@ -1,18 +1,12 @@
 import React from "react";
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, Pressable } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useLanguage } from "../../context/LanguageContext";
-import {
-  CardWrap,
-  Placeholder,
-  Badge,
-  Field,
-  Button,
-  openLink,
-} from "./_CardParts";
+import { CardWrap, Placeholder, Badge, Field, Button, openLink } from "./_CardParts";
 
 export default function CardFund(props) {
   const {
-    className, // совместимость, не используется
+    className, // совместимость
     title,
     logo,
     description,
@@ -25,6 +19,11 @@ export default function CardFund(props) {
     website,
     reports, // { label?, href?, screen? }
     onNavigate, // (screenName) => void
+    facebook,
+    instagram,
+    tiktok,
+    youtube,
+    twitter,
   } = props;
 
   const { t } = useLanguage();
@@ -36,9 +35,17 @@ export default function CardFund(props) {
       : `https://wa.me/${whatsapp.replace(/[^\d]/g, "")}`
     : undefined;
 
-    const mapsHref = address
-      ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
-      : undefined;
+  const mapsHref = address
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
+    : undefined;
+
+  const socials = [
+    { href: facebook,  icon: "logo-facebook",  label: "Facebook" },
+    { href: instagram, icon: "logo-instagram", label: "Instagram" },
+    { href: tiktok,    icon: "logo-tiktok",    label: "TikTok" },
+    { href: youtube,   icon: "logo-youtube",   label: "YouTube" },
+    { href: twitter,   icon: "logo-twitter",   label: "Twitter" },
+  ].filter(s => !!s.href);
 
   return (
     <CardWrap>
@@ -78,14 +85,28 @@ export default function CardFund(props) {
       ) : null}
 
       <View style={{ marginTop: 6 }}>
-        <Field label={L("card.fund.email", "Email")} value={email} href={email ? `mailto:${email}` : undefined} />
+        <Field label={L("card.fund.email", "Email")}   value={email}   href={email ? `mailto:${email}` : undefined} />
         <Field label={L("card.fund.phone1", "Phone 1")} value={phone1} href={phone1 ? `tel:${phone1}` : undefined} />
         <Field label={L("card.fund.phone2", "Phone 2")} value={phone2} href={phone2 ? `tel:${phone2}` : undefined} />
         <Field label={L("card.fund.whatsapp", "WhatsApp")} value={whatsapp} href={waHref} />
-        {/* <Field label={L("card.fund.address", "Address")} value={address} /> */}
-        <Field label={L("card.fund.address", "Address")} value={address} href={mapsHref} />
-        <Field label={L("card.fund.website", "Website")} value={website} href={website} />
+        <Field label={L("card.fund.address", "Address")}  value={address}  href={mapsHref} />
+        <Field label={L("card.fund.website", "Website")}  value={website}  href={website} />
       </View>
+
+      {socials.length > 0 ? (
+        <View style={{ marginTop: 16, flexDirection: "row", alignItems: "center" }}>
+          {socials.map((s, i) => (
+            <Pressable
+              key={i}
+              onPress={() => openLink(s.href)}
+              style={{ marginRight: 16, padding: 8 }}
+              accessibilityLabel={s.label}
+            >
+              <Ionicons name={s.icon} size={20} color="#6b7280" />
+            </Pressable>
+          ))}
+        </View>
+      ) : null}
 
       {reports ? (
         <View style={{ marginTop: 10 }}>
