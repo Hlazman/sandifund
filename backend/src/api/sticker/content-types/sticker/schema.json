@@ -50,6 +50,26 @@
           "localized": false
         }
       }
+    },
+    "zipFileUrl": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "zipFile": {
+      "type": "media",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "multiple": false,
+      "allowedTypes": [
+        "files"
+      ]
     }
   }
 }
