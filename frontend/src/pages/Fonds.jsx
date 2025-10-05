@@ -62,6 +62,13 @@ export default function Fonds() {
               whatsapp={f.whatsapp}
               totalDonations={typeof f.totalDonations === "number" ? f.totalDonations : undefined}
               website={f.website}
+              // новые ссылки соцсетей
+              facebook={f.Facebook}
+              instagram={f.Instagram}
+              tiktok={f.TikTok}
+              youtube={f.YouTube}
+              twitter={f.Twitter}
+              // кнопка отчётов остаётся как была
               reports={{
                 label: t("card.fund.reports") || "Reports",
                 href: `/reports?fundId=${encodeURIComponent(f.documentId)}&fundTitle=${encodeURIComponent(f.title || "")}`,

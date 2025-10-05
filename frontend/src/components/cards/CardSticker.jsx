@@ -8,7 +8,7 @@ export default function CardSticker(props) {
     title,
     image,
     description,
-    link,
+    zipHref, // абсолютная или относительная ссылка на zip
   } = props;
 
   const { t } = useLanguage();
@@ -26,9 +26,11 @@ export default function CardSticker(props) {
 
       {description ? <p className="text-sm text-gray-700 whitespace-pre-wrap">{description}</p> : null}
 
-      {link ? (
+      {zipHref ? (
         <div className="pt-1">
-          <ButtonLink href={link}>{L("card.sticker.openLink", "Open link")}</ButtonLink>
+          <ButtonLink href={zipHref} download fullWidth>
+            {L("card.sticker.download", "Скачать")}
+          </ButtonLink>
         </div>
       ) : null}
     </div>

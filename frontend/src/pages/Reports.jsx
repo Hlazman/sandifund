@@ -1,5 +1,4 @@
 import React from "react";
-import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@apollo/client/react";
 import { GET_REPORTS } from "../api/get";
 import { useLanguage } from "../context/LanguageContext";

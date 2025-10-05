@@ -1,105 +1,58 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import CardProduct from "../components/cards/CardProduct";
-import CardFund from "../components/cards/CardFund";
-import CardSticker from "../components/cards/CardSticker";
+import { useQuery } from "@apollo/client/react";
+import { GET_STICKERS } from "../api/get";
 import { useLanguage } from "../context/LanguageContext";
-
-function randomItem(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
+import CardSticker from "../components/cards/CardSticker";
 
 export default function Sticers() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
 
-  // фиксируем seed, чтобы демо-значения не прыгали при каждом рендере
-  const [seed] = React.useState(() => Math.random().toString(36).slice(2, 8));
+  const { data, loading, error } = useQuery(GET_STICKERS, {
+    variables: { locale },
+    fetchPolicy: "cache-and-network",
+  });
 
-  const product = React.useMemo(() => {
-    const titles = ["Olive Wood Bowl", "Handmade Candle", "Ceramic Mug", "Linen Tote Bag", "Wool Scarf"];
-    const descs = [
-      "Eco-friendly and handcrafted with care.",
-      "Limited batch. Natural materials only.",
-      "Perfect as a gift. Dishwasher safe.",
-      "Strong stitches and comfy long straps.",
-      "Soft, warm and breathable. Unisex.",
-    ];
-    const statuses = ["В наличии", "Забронировано", "Куплено"];
-    const prices = [149, 199, 249, 299, 349];
-    const donations = [5, 10, 12, 15];
+  const GRAPHQL_URL = process.env.REACT_APP_GRAPHQL_URL || "";
+  const API_BASE = GRAPHQL_URL.replace(/\/graphql\/?$/, "");
 
-    return {
-      title: `${randomItem(titles)} #${seed.toUpperCase()}`,
-      description: randomItem(descs),
-      price: randomItem(prices),
-      donationPercent: randomItem(donations),
-      status: randomItem(statuses),
-      master: { name: "Anna Master", href: "/masters" },
-      image: null,
-      onReserve: () => window.alert("Бронирование: заявка отправлена (демо)"),
-      reserveLabel: t("card.product.reserve") || "Забронировать",
-    };
-  }, [seed, t]);
+  const stickers = data?.stickers || [];
 
-  const fund = React.useMemo(() => {
-    const titles = ["Helping Hands", "Bright Future", "Care & Share", "Sunrise Foundation", "Kind Hearts"];
-    const descs = [
-      "Supporting local communities with targeted aid.",
-      "Education and mentorship programs for youth.",
-      "Medical support for families in need.",
-      "Emergency relief and recovery assistance.",
-      "Cultural and social inclusion initiatives.",
-    ];
-    const phones = ["+972 54-111-2233", "+972 52-444-5566", "+972 53-777-8899"];
-    const totals = [2500, 7630, 12000, 540, 90550];
-
-    return {
-      title: randomItem(titles),
-      description: randomItem(descs),
-      email: "info@sandifund.org",
-      phone1: randomItem(phones),
-      phone2: Math.random() > 0.5 ? randomItem(phones) : null,
-      address: "Tel Aviv - Yafo, Israel",
-      whatsapp: "+972 541112233",
-      totalDonations: randomItem(totals),
-      website: "https://example.org",
-      reports: { href: "/reports" },
-      logo: null,
-    };
-  }, []);
-
-  const sticker = React.useMemo(() => {
-    const titles = ["Cats Party", "Sunny Day", "Pixel Hearts", "Coffee Time", "Good Vibes"];
-    const descs = [
-      "Cute stickers for daily chats.",
-      "Minimal, clean and fun.",
-      "Retro pixel-art style pack.",
-      "Perfect for coffee lovers.",
-      "Spread positivity in your messages.",
-    ];
-    return {
-      title: randomItem(titles),
-      description: randomItem(descs),
-      image: null,
-      link: "https://example.org/stickers",
-    };
-  }, []);
+  const resolveUrl = (url) => {
+    if (!url) return null;
+    return url.startsWith("http") ? url : `${API_BASE}${url}`;
+  };
 
   return (
     <div className="max-w-6xl mx-auto p-4">
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-2xl font-semibold">
-          {t("header.items.sticers") || "Sticers"}
+          {t("header.items.sticers")}
         </h1>
-        <Link className="text-sm text-indigo-600 hover:underline" to="/funds">
-          {t("header.items.funds") || "Funds"}
-        </Link>
       </div>
 
+      {loading && !data && (
+        <div className="text-gray-500">{t("notifications.loading") || "Loading…"}</div>
+      )}
+
+      {error && (
+        <div className="text-red-600">{t("errors.network") || "Network error."}</div>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <CardProduct {...product} />
-        <CardFund {...fund} />
-        <CardSticker {...sticker} />
+        {stickers.map((s) => {
+          const image = resolveUrl(s?.image?.url);
+          const zipHref = resolveUrl(s?.zipFile?.url) || s?.zipFileUrl || null;
+
+          return (
+            <CardSticker
+              key={s.documentId}
+              title={s.title}
+              description={s.description}
+              image={image}
+              zipHref={zipHref}
+            />
+          );
+        })}
       </div>
     </div>
   );
