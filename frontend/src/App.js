@@ -6,10 +6,9 @@ import Footer from "./components/Footer";
 import Sticers from "./pages/Sticers";
 import Payment from "./pages/Payment";
 import Profile from "./pages/Profile";
-import Fonds from "./pages/Fonds"; // используем тот же компонент, но путь будет /funds
+import Fonds from "./pages/Fonds";
 import Goods from "./pages/Goods";
 import FAQ from "./pages/FAQ";
-import Orders from "./pages/Orders";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Auth from "./pages/Auth";
@@ -20,6 +19,9 @@ import CheckEmail from "./pages/CheckEmail";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import Masters from "./pages/Masters";
+import Master from "./pages/Master";
+import Booked from "./pages/Booked";
+import MyOrders from "./pages/MyOrders";
 import MyGoods from "./pages/MyGoods";
 import Reports from "./pages/Reports";
 
@@ -94,6 +96,15 @@ export default function App() {
           />
 
           <Route
+            path="/masters/:id"
+            element={
+              <ProtectedRoute>
+                <Master />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             path="/faq"
             element={
               <ProtectedRoute>
@@ -112,10 +123,24 @@ export default function App() {
           />
 
           <Route
-            path="/orders"
+            // path="/orders"
+            path="/my-orders"
             element={
               <ProtectedRoute>
-                  <Orders />
+                  <MyOrders />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/orders"
+            element={<Navigate to="/my-orders" replace />}
+          />
+          <Route
+            path="/booked/:id"
+            element={
+              <ProtectedRoute>
+                <Booked />
               </ProtectedRoute>
             }
           />

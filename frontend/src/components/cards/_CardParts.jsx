@@ -69,9 +69,19 @@ export const ButtonLink = ({ to, href, children, fullWidth, download }) => {
   return null;
 };
 
+// export const statusKeyFrom = (s) => {
+//   const v = (s || "").toString().toLowerCase();
+//   if (!v) return null;
+//   if (v.includes("stock") || v.includes("налич")) return "inStock";
+//   if (v.includes("reserv") || v.includes("заброн")) return "reserved";
+//   if (v.includes("sold") || v.includes("куплен") || v.includes("bought") || v.includes("purchas")) return "sold";
+//   return null;
+// };
+
 export const statusKeyFrom = (s) => {
   const v = (s || "").toString().toLowerCase();
   if (!v) return null;
+  if (v.includes("booked") || v.includes("брон")) return "booked";
   if (v.includes("stock") || v.includes("налич")) return "inStock";
   if (v.includes("reserv") || v.includes("заброн")) return "reserved";
   if (v.includes("sold") || v.includes("куплен") || v.includes("bought") || v.includes("purchas")) return "sold";

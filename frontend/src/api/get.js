@@ -135,3 +135,47 @@ export const GET_FAQS = gql`
     }
   }
 `;
+
+export const GET_MASTERS = gql`
+  query Masters($pagination: PaginationArg, $productsPagination2: PaginationArg) {
+    masters(pagination: $pagination) {
+      description
+      documentId
+      email
+      locale
+      name
+      photo { documentId url }
+      products(pagination: $productsPagination2) { documentId title state }
+      whatsapp
+    }
+  }
+`;
+
+export const GET_PRODUCTS = gql`
+  query Products($pagination: PaginationArg) {
+    products(pagination: $pagination) {
+      documentId
+      description
+      donationPercent
+      image { documentId url }
+      locale
+      master { documentId name }
+      price
+      sold
+      state
+      title
+      user_info { documentId }
+    }
+  }
+`;
+
+export const GET_MY_PRODUCTS_IDS = gql`
+  query Query {
+    meFull {
+      user_info {
+        documentId
+        products { documentId }
+      }
+    }
+  }
+`;
