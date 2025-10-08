@@ -49,3 +49,14 @@ export const SET_USERINFO_NOTIFICATIONS = gql`
     }
   }
 `;
+
+// Изменить продукт (бронируем и привязываем к user_info)
+export const UPDATE_PRODUCT = gql`
+  mutation UpdateProduct($documentId: ID!, $data: ProductInput!) {
+    updateProduct(documentId: $documentId, data: $data) {
+      documentId
+      state
+      user_info { documentId }
+    }
+  }
+`;

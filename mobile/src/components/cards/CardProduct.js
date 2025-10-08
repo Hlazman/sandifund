@@ -66,7 +66,8 @@ export default function CardProduct(props) {
       </View>
 
       {typeof price === "number" ? (
-        <Field label={L("card.product.price", "Price")} value={`${price}`} />
+        // <Field label={L("card.product.price", "Price")} value={`${price}`} />
+        <Field label={L("card.product.price", "Price")} value={`${price} ₪`} />
       ) : null}
       {typeof donationPercent === "number" ? (
         <Field label={L("card.product.donation", "Donation")} value={`${donationPercent}%`} />
@@ -96,6 +97,7 @@ export default function CardProduct(props) {
           <Button
             title={reserveLabel || L("card.product.reserve", "Reserve")}
             onPress={onReserve}
+            fullWidth
           />
         </View>
       ) : null}

@@ -139,3 +139,86 @@ export const GET_FAQS = gql`
     }
   }
 `;
+
+// Все мастера (с краткой информацией и списком их продуктов для подсчёта)
+export const GET_MASTERS = gql`
+  query Masters($pagination: PaginationArg, $locale: I18NLocaleCode) {
+    masters(pagination: $pagination, locale: $locale) {
+      documentId
+      name
+      email
+      whatsapp
+      description
+      photo { url documentId }
+      products(filters: { state: { in: ["inStock", "booked"] } }, pagination: { limit: 250 }) {
+        documentId
+      }
+    }
+  }
+`;
+
+// Один мастер (для страницы мастера) + его продукты (кроме sold/notValid)
+export const GET_MASTER = gql`
+  query Master($documentId: ID!, $locale: I18NLocaleCode) {
+    master(documentId: $documentId, locale: $locale) {
+      documentId
+      name
+      email
+      whatsapp
+      description
+      photo { url documentId }
+      products(
+        filters: { state: { in: ["inStock", "booked"] } }
+        pagination: { limit: 250 }
+      ) {
+        documentId
+        title
+        description
+        price
+        donationPercent
+        state
+        image { url documentId }
+        master { documentId name photo { url documentId } }
+        user_info { documentId }
+      }
+    }
+  }
+`;
+
+// Продукты (общий список для Goods, с фильтрами)
+export const GET_PRODUCTS = gql`
+  query Products($filters: ProductFiltersInput, $pagination: PaginationArg, $locale: I18NLocaleCode) {
+    products(filters: $filters, pagination: $pagination, locale: $locale) {
+      documentId
+      title
+      description
+      price
+      donationPercent
+      state
+      image { documentId url }
+      master { documentId name photo { url documentId } }
+      user_info { documentId }
+    }
+  }
+`;
+
+// Продукты, принадлежащие конкретному user_info (для My Orders)
+export const GET_MY_PRODUCTS = gql`
+  query MyProducts($userInfoId: ID!, $locale: I18NLocaleCode) {
+    products(
+      filters: { user_info: { documentId: { eq: $userInfoId } } }
+      pagination: { limit: 250 }
+      locale: $locale
+    ) {
+      documentId
+      title
+      description
+      price
+      donationPercent
+      state
+      image { documentId url }
+      master { documentId name photo { url documentId } }
+      user_info { documentId }
+    }
+  }
+`;
