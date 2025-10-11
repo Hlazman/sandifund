@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { useQuery } from "@apollo/client/react";
-import { GET_PRODUCTS, GET_MY_PRODUCTS_IDS, GET_MY_USER_INFO } from "../api/get";
+// import { GET_PRODUCTS, GET_MY_PRODUCTS_IDS, GET_MY_USER_INFO } from "../api/get";
+import { GET_PRODUCTS, GET_MY_USER_INFO } from "../api/get";
 import CardProduct from "../components/cards/CardProduct";
 import { useLanguage } from "../context/LanguageContext";
 
@@ -12,8 +13,9 @@ export default function MyOrders() {
   const { data: uiData } = useQuery(GET_MY_USER_INFO);
   const myUserInfoId = uiData?.meFull?.user_info?.documentId;
 
-  const { data: idsData } = useQuery(GET_MY_PRODUCTS_IDS);
-  const myIds = (idsData?.meFull?.user_info?.products || []).map((p) => p.documentId);
+  // const { data: idsData } = useQuery(GET_MY_PRODUCTS_IDS);
+  // const myIds = (idsData?.meFull?.user_info?.products || []).map((p) => p.documentId);
+  const myIds = (uiData?.meFull?.user_info?.products || []).map((p) => p.documentId);
 
   const { data, loading, error } = useQuery(GET_PRODUCTS, {
     variables: { pagination: { limit: 100 } },
@@ -84,7 +86,12 @@ export default function MyOrders() {
               price={p.price}
               donationPercent={p.donationPercent}
               status={p.state}
+              // master={{
+              //   name: p.master?.name,
+              //   href: p.master?.documentId ? `/masters/${p.master.documentId}` : undefined,
+              // }}
               master={{
+                documentId: p.master?.documentId,
                 name: p.master?.name,
                 href: p.master?.documentId ? `/masters/${p.master.documentId}` : undefined,
               }}

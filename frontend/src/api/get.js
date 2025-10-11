@@ -33,6 +33,8 @@ export const GET_MY_USER_INFO = gql`
         documentId
         language
         createdAt
+        products { documentId }
+        master { documentId }
       }
     }
   }
@@ -169,13 +171,34 @@ export const GET_PRODUCTS = gql`
   }
 `;
 
-export const GET_MY_PRODUCTS_IDS = gql`
-  query Query {
-    meFull {
-      user_info {
-        documentId
-        products { documentId }
-      }
+// export const GET_MY_PRODUCTS_IDS = gql`
+//   query Query {
+//     meFull {
+//       user_info {
+//         documentId
+//         products { documentId }
+//       }
+//     }
+//   }
+// `;
+
+export const GET_PRODUCTS_BY_MASTER = gql`
+  query ProductsByMaster($pagination: PaginationArg, $masterId: ID!) {
+    products(
+      pagination: $pagination
+      filters: { master: { documentId: { eq: $masterId } } }
+    ) {
+      documentId
+      description
+      donationPercent
+      image { documentId url }
+      locale
+      master { documentId name }
+      price
+      sold
+      state
+      title
+      user_info { documentId }
     }
   }
 `;

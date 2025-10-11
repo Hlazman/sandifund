@@ -39,7 +39,12 @@ export default function Goods() {
               price={p.price}
               donationPercent={p.donationPercent}
               status={p.state}
+              // master={{
+              //   name: p.master?.name,
+              //   href: p.master?.documentId ? `/masters/${p.master.documentId}` : undefined,
+              // }}
               master={{
+                documentId: p.master?.documentId,
                 name: p.master?.name,
                 href: p.master?.documentId ? `/masters/${p.master.documentId}` : undefined,
               }}
