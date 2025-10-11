@@ -1,139 +1,221 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  View, Text, TextInput, TouchableOpacity, ActivityIndicator,
+  KeyboardAvoidingView, Platform, ScrollView, Pressable,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
 import { useQuery, useMutation } from "@apollo/client/react";
-import { GET_STICKERS } from "../api/get";
-import { LOGIN } from "../api/mutations";
+import { GET_ME, GET_MY_USER_INFO } from "../api/get";
 import { useLanguage } from "../context/LanguageContext";
 import LanguageSelect from "../components/LanguageSelect";
+import { UPDATE_USERS_PERMISSIONS_USER } from "../api/mutations";
 
-// демо-логин — оставляю как у тебя; можно заменить на temp@sandifund.com / demo123
-const DEMO_EMAIL = "glazman.b@gmail.com";
-const DEMO_PASSWORD = "JjgYsyd44cGoGF";
-
-export default function Profile() {
-  const { locale, t, refreshMe } = useLanguage();
-  const [authReady, setAuthReady] = useState(!!globalThis.sf_jwt);
-
-  // Демо-логин → после него тянем authoritative язык (meFull → user_info)
-  const [login] = useMutation(LOGIN, {
-    onCompleted: async ({ login }) => {
-      if (login?.jwt) {
-        globalThis.sf_jwt = login.jwt;
-        await refreshMe().catch(() => {});
-        setAuthReady(true);
-      }
-    },
-  });
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      if (!globalThis.sf_jwt) {
-        try {
-          await login({
-            variables: { identifier: DEMO_EMAIL, password: DEMO_PASSWORD },
-          });
-        } catch {
-          // остались без JWT — authReady=false, запросы ниже будут skip
-        }
-      } else {
-        await refreshMe().catch(() => {});
-        if (!cancelled) setAuthReady(true);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Не шлём локализованный контент, пока не готовы по auth (решает Forbidden)
-  const {
-    data: stickersData,
-    error: stickersError,
-    loading,
-    networkStatus,
-    refetch,
-  } = useQuery(GET_STICKERS, {
-    variables: { locale: (locale || "en").toLowerCase() },
-    fetchPolicy: "cache-and-network",
-    returnPartialData: true,
-    notifyOnNetworkStatusChange: true,
-    skip: !authReady,
-  });
-
-  const isLoading =
-    !authReady || loading || networkStatus === 1 || networkStatus === 2 || networkStatus === 4;
-
-  const stickers = Array.isArray(stickersData?.stickers) ? stickersData.stickers : [];
-
+function ConfirmModal({ visible, title, desc, onCancel, onOk, t }) {
+  if (!visible) return null;
   return (
-    <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 12 }}>
-        <View style={{ marginBottom: 12 }}>
-          <Text style={{ marginBottom: 6 }}>Language</Text>
-          <LanguageSelect />
+    <View style={{
+      position: "absolute", inset: 0, backgroundColor: "rgba(0,0,0,0.35)",
+      justifyContent: "center", alignItems: "center", padding: 24, zIndex: 20,
+    }}>
+      <View style={{
+        width: "100%", maxWidth: 420, backgroundColor: "#fff",
+        borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "#e5e7eb",
+      }}>
+        <Text style={{ fontSize: 18, fontWeight: "700", marginBottom: 6 }}>{title}</Text>
+        {desc ? <Text style={{ color: "#374151", marginBottom: 12 }}>{desc}</Text> : null}
+        <View style={{ flexDirection: "row", justifyContent: "flex-end", gap: 8 }}>
+          <Pressable onPress={onCancel} style={({ pressed }) => ({
+            paddingVertical: 10, paddingHorizontal: 14, borderRadius: 10,
+            borderWidth: 1, borderColor: "#d1d5db", backgroundColor: pressed ? "#f3f4f6" : "#fff",
+          })}>
+            <Text style={{ fontWeight: "700" }}>{t("common.cancel")}</Text>
+          </Pressable>
+          <Pressable onPress={onOk} style={({ pressed }) => ({
+            paddingVertical: 10, paddingHorizontal: 14, borderRadius: 10,
+            backgroundColor: pressed ? "#4338ca" : "#4f46e5",
+          })}>
+            <Text style={{ color: "#fff", fontWeight: "700" }}>{t("common.ok")}</Text>
+          </Pressable>
         </View>
-
-        <View style={{ marginBottom: 12 }}>
-          <Text style={{ opacity: 0.6 }}>auth.register</Text>
-          <Text style={{ fontWeight: "700" }}>{t("auth.register")}</Text>
-
-          <Text style={{ opacity: 0.6, marginTop: 8 }}>auth.rememberMe</Text>
-          <Text style={{ fontWeight: "700" }}>{t("auth.rememberMe")}</Text>
-        </View>
-
-        <View>
-          <Text style={{ fontWeight: "700", marginBottom: 6 }}>Stickers ({locale})</Text>
-
-          {!isLoading && stickersError ? (
-            <View
-              style={{
-                padding: 8,
-                borderWidth: 1,
-                borderColor: "#fecaca",
-                borderRadius: 8,
-                backgroundColor: "#fff1f2",
-                marginBottom: 8,
-              }}
-            >
-              <Text style={{ color: "#b91c1c", fontWeight: "600" }}>GraphQL error</Text>
-              <Text selectable style={{ marginTop: 4, color: "#7f1d1d" }}>
-                {String(stickersError.message || stickersError)}
-              </Text>
-              <Text
-                onPress={() => refetch()}
-                style={{ marginTop: 8, color: "#2563eb", fontWeight: "600" }}
-              >
-                Повторить запрос
-              </Text>
-            </View>
-          ) : null}
-
-          {isLoading ? (
-            <View style={{ paddingVertical: 8 }}>
-              <ActivityIndicator />
-            </View>
-          ) : stickers.length > 0 ? (
-            stickers.map((s, i) => (
-              <View
-                key={i}
-                style={{
-                  borderWidth: 1,
-                  borderColor: "#e5e7eb",
-                  borderRadius: 8,
-                  padding: 8,
-                  marginBottom: 8,
-                }}
-              >
-                <Text style={{ fontWeight: "600" }}>{s.title}</Text>
-                <Text style={{ opacity: 0.8 }}>{s.description}</Text>
-              </View>
-            ))
-          ) : (
-            <Text style={{ opacity: 0.7 }}>Нет данных для выбранной локали.</Text>
-          )}
-        </View>
+      </View>
     </View>
   );
 }
+
+export default function Profile() {
+  const { t } = useLanguage();
+  const nav = useNavigation();
+
+  const { data: meData, loading: meLoading, refetch: refetchMe } = useQuery(GET_ME, { fetchPolicy: "cache-and-network" });
+  useQuery(GET_MY_USER_INFO, { fetchPolicy: "cache-first" });
+
+  const me = meData?.me || null;
+  const roleName = useMemo(() => (me?.role?.name || me?.role?.type || "").toString().toLowerCase(), [me]);
+
+  const [updateUser, { loading: updatingUser, error: updateErr }] =
+    useMutation(UPDATE_USERS_PERMISSIONS_USER, { onCompleted: () => refetchMe().catch(() => {}) });
+
+  const [email, setEmail] = useState(me?.email || "");
+  const [emailMsg, setEmailMsg] = useState("");
+  const [username, setUsername] = useState(me?.username || "");
+  const [usernameMsg, setUsernameMsg] = useState("");
+  const [askUsername, setAskUsername] = useState(false);
+
+  useEffect(() => {
+    if (me?.email) setEmail(me.email);
+    if (me?.username) setUsername(me.username);
+  }, [me?.email, me?.username]);
+
+  const isEmailValid = !!email && /\S+@\S+\.\S+/.test(email);
+  const canSaveEmail = !!me?.id && isEmailValid && email !== me?.email;
+  const canSaveUsername = !!me?.id && username && username.length >= 2 && username !== me?.username;
+
+  const saveEmail = async () => {
+    setEmailMsg("");
+    try {
+      await updateUser({ variables: { id: me.id, data: { email } } });
+      setEmailMsg("OK");
+    } catch (e) {
+      setEmailMsg(e?.message || t("errors.unknown"));
+    }
+  };
+
+  const saveUsername = async () => {
+    setAskUsername(false);
+    setUsernameMsg("");
+    try {
+      await updateUser({ variables: { id: me.id, data: { username } } });
+      setUsernameMsg("OK");
+    } catch (e) {
+      setUsernameMsg(e?.message || t("errors.unknown"));
+    }
+  };
+
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+        <ScrollView
+          contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12, gap: 16, paddingBottom: 32 }}
+          keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}
+        >
+          {/* Шапка */}
+          <View style={{ backgroundColor: "#fff", borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 12, padding: 12 }}>
+            <Text style={{ fontSize: 18, fontWeight: "700", marginBottom: 8 }}>
+              {t("header.items.profile") || "My profile"}
+            </Text>
+            {meLoading ? <ActivityIndicator /> : (
+              <>
+                <Text style={{ color: "#374151" }}>
+                  <Text style={{ opacity: 0.7 }}>{t("pages.profile.changeUsername")}{": "}</Text>
+                  <Text style={{ fontWeight: "600" }}>{me?.username || "-"}</Text>
+                </Text>
+                <Text style={{ color: "#374151", marginTop: 4 }}>
+                  <Text style={{ opacity: 0.7 }}>{t("auth.email")}{": "}</Text>
+                  <Text style={{ fontWeight: "600" }}>{me?.email || "-"}</Text>
+                </Text>
+              </>
+            )}
+          </View>
+
+          {/* Язык */}
+          <View style={{ backgroundColor: "#fff", borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 12, padding: 12 }}>
+            <Text style={{ fontWeight: "700", marginBottom: 8 }}>{t("common.language")}</Text>
+            <LanguageSelect />
+          </View>
+
+          {/* Подписка — заглушка */}
+          <View style={{ backgroundColor: "#fff", borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 12, padding: 12 }}>
+            <Text style={{ fontWeight: "700", marginBottom: 6 }}>{t("pages.profile.subscription")}</Text>
+            <Text style={{ color: "#6b7280" }}>{t("pages.profile.subscriptionDesc")}</Text>
+          </View>
+
+          {/* Платежи — заглушка */}
+          <View style={{ backgroundColor: "#fff", borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 12, padding: 12 }}>
+            <Text style={{ fontWeight: "700", marginBottom: 6 }}>{t("pages.profile.payment")}</Text>
+            <Text style={{ color: "#6b7280" }}>{t("pages.profile.paymentDesc")}</Text>
+          </View>
+
+          {/* Email */}
+          <View style={{ backgroundColor: "#fff", borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 12, padding: 12, gap: 8 }}>
+            <Text style={{ fontWeight: "700" }}>{t("pages.profile.changeEmail")}</Text>
+            <TextInput
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              placeholder={t("auth.placeholders.email")}
+              style={{ borderWidth: 1, borderColor: "#d1d5db", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, backgroundColor: "#fff" }}
+            />
+            {!isEmailValid && !!email ? <Text style={{ color: "#b91c1c" }}>{t("auth.errors.invalidEmail")}</Text> : null}
+            <TouchableOpacity
+              disabled={!canSaveEmail || updatingUser}
+              onPress={saveEmail}
+              style={{ backgroundColor: !canSaveEmail || updatingUser ? "#c7d2fe" : "#4f46e5",
+                borderRadius: 10, paddingVertical: 12, alignItems: "center" }}
+            >
+              {updatingUser ? <ActivityIndicator color="#fff" /> : <Text style={{ color: "#fff", fontWeight: "700" }}>{t("common.save")}</Text>}
+            </TouchableOpacity>
+            {!!emailMsg && <Text style={{ color: emailMsg === "OK" ? "#15803d" : "#b91c1c" }}>
+              {emailMsg === "OK" ? t("common.ok") : emailMsg}
+            </Text>}
+            {updateErr ? <Text style={{ color: "#b91c1c" }}>{String(updateErr.message)}</Text> : null}
+          </View>
+
+          {/* Пароль — переход на отдельную страницу */}
+          <View style={{ backgroundColor: "#fff", borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 12, padding: 12, gap: 8 }}>
+            <Text style={{ fontWeight: "700" }}>{t("pages.profile.changePassword")}</Text>
+            <TouchableOpacity
+              onPress={() => nav.navigate("ChangePassword")}
+              style={{ backgroundColor: "#4f46e5", borderRadius: 10, paddingVertical: 12, alignItems: "center" }}
+            >
+              <Text style={{ color: "#fff", fontWeight: "700" }}>{t("pages.profile.changePassword")}</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Username — с подтверждением */}
+          <View style={{ backgroundColor: "#fff", borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 12, padding: 12, gap: 8 }}>
+            <Text style={{ fontWeight: "700" }}>{t("pages.profile.changeUsername")}</Text>
+            <TextInput
+              value={username}
+              onChangeText={setUsername}
+              autoCapitalize="none"
+              placeholder={t("pages.profile.changeUsername")}
+              style={{ borderWidth: 1, borderColor: "#d1d5db", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, backgroundColor: "#fff" }}
+            />
+            <TouchableOpacity
+              disabled={!canSaveUsername || updatingUser}
+              onPress={() => setAskUsername(true)}
+              style={{ backgroundColor: !canSaveUsername || updatingUser ? "#c7d2fe" : "#4f46e5",
+                borderRadius: 10, paddingVertical: 12, alignItems: "center" }}
+            >
+              {updatingUser ? <ActivityIndicator color="#fff" /> : <Text style={{ color: "#fff", fontWeight: "700" }}>{t("common.save")}</Text>}
+            </TouchableOpacity>
+            {!!usernameMsg && <Text style={{ color: usernameMsg === "OK" ? "#15803d" : "#b91c1c" }}>
+              {usernameMsg === "OK" ? t("common.ok") : usernameMsg}
+            </Text>}
+          </View>
+
+          {/* Низ страницы */}
+          <View style={{ borderWidth: 1, borderColor: "#e5e7eb", backgroundColor: "#fff", borderRadius: 12, padding: 12, marginBottom: 8 }}>
+            <Text style={{ color: "#374151" }}>
+              {roleName === "master" ? t("pages.profile.masterFooter") : t("pages.profile.userFooter")}
+            </Text>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+
+      {/* подтверждение имени */}
+      <ConfirmModal
+        visible={askUsername}
+        t={t}
+        title={t("pages.profile.changeUsername")}
+        desc={t("pages.myGoods.confirmChange")}
+        onCancel={() => setAskUsername(false)}
+        onOk={saveUsername}
+      />
+    </SafeAreaView>
+  );
+}
+
 

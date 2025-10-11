@@ -60,3 +60,23 @@ export const UPDATE_PRODUCT = gql`
     }
   }
 `;
+
+
+// Обновление email/username текущего пользователя (Strapi users-permissions)
+export const UPDATE_USERS_PERMISSIONS_USER = gql`
+  mutation UpdateUsersPermissionsUser($id: ID!, $data: UsersPermissionsUserInput!) {
+    updateUsersPermissionsUser(id: $id, data: $data) {
+      __typename
+    }
+  }
+`;
+
+// Сменить пароль
+export const CHANGE_PASSWORD = gql`
+  mutation ChangePassword($currentPassword: String!, $password: String!, $passwordConfirmation: String!) {
+    changePassword(currentPassword: $currentPassword, password: $password, passwordConfirmation: $passwordConfirmation) {
+      jwt
+      user { id }
+    }
+  }
+`;
