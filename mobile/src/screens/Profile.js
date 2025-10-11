@@ -99,7 +99,6 @@ export default function Profile() {
           contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12, gap: 16, paddingBottom: 32 }}
           keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}
         >
-          {/* Шапка */}
           <View style={{ backgroundColor: "#fff", borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 12, padding: 12 }}>
             <Text style={{ fontSize: 18, fontWeight: "700", marginBottom: 8 }}>
               {t("header.items.profile") || "My profile"}
@@ -124,13 +123,13 @@ export default function Profile() {
             <LanguageSelect />
           </View>
 
-          {/* Подписка — заглушка */}
+          //TODO {/* Подписка — заглушка */} 
           <View style={{ backgroundColor: "#fff", borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 12, padding: 12 }}>
             <Text style={{ fontWeight: "700", marginBottom: 6 }}>{t("pages.profile.subscription")}</Text>
             <Text style={{ color: "#6b7280" }}>{t("pages.profile.subscriptionDesc")}</Text>
           </View>
 
-          {/* Платежи — заглушка */}
+          //TODO {/* Платежи — заглушка */}
           <View style={{ backgroundColor: "#fff", borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 12, padding: 12 }}>
             <Text style={{ fontWeight: "700", marginBottom: 6 }}>{t("pages.profile.payment")}</Text>
             <Text style={{ color: "#6b7280" }}>{t("pages.profile.paymentDesc")}</Text>
