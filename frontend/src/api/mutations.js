@@ -58,3 +58,25 @@ export const UPDATE_PRODUCT = gql`
     }
   }
 `;
+
+// обновление полей users-permissions пользователя (email/username)
+export const UPDATE_USERS_PERMISSIONS_USER = gql`
+  mutation UpdateUsersPermissionsUser($id: ID!, $data: UsersPermissionsUserInput!) {
+    updateUsersPermissionsUser(id: $id, data: $data) {
+      __typename
+    }
+  }
+`;
+
+// смена пароля (без писем)
+export const CHANGE_PASSWORD = gql`
+  mutation ChangePassword($currentPassword: String!, $password: String!, $passwordConfirmation: String!) {
+    changePassword(
+      currentPassword: $currentPassword
+      password: $password
+      passwordConfirmation: $passwordConfirmation
+    ) {
+      jwt
+    }
+  }
+`;

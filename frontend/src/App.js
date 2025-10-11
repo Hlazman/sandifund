@@ -16,6 +16,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import EmailConfirmation from "./pages/EmailConfirmation";
 import CheckEmail from "./pages/CheckEmail";
+import ChangePassword from "./pages/ChangePassword";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import Masters from "./pages/Masters";
@@ -123,7 +124,6 @@ export default function App() {
           />
 
           <Route
-            // path="/orders"
             path="/my-orders"
             element={
               <ProtectedRoute>
@@ -136,6 +136,7 @@ export default function App() {
             path="/orders"
             element={<Navigate to="/my-orders" replace />}
           />
+
           <Route
             path="/booked/:id"
             element={
@@ -145,12 +146,20 @@ export default function App() {
             }
           />
 
-          {/* Reports — страница есть, но в меню не показываем */}
           <Route
             path="/reports"
             element={
               <ProtectedRoute>
                 <Reports />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/change-password"
+            element={
+              <ProtectedRoute>
+                <ChangePassword />
               </ProtectedRoute>
             }
           />
