@@ -16,6 +16,7 @@ export const GET_MY_USER_INFO = gql`
       user_info {
         documentId
         language
+        master { documentId }
       }
     }
   }
@@ -207,6 +208,27 @@ export const GET_MY_PRODUCTS = gql`
   query MyProducts($userInfoId: ID!, $locale: I18NLocaleCode) {
     products(
       filters: { user_info: { documentId: { eq: $userInfoId } } }
+      pagination: { limit: 250 }
+      locale: $locale
+    ) {
+      documentId
+      title
+      description
+      price
+      donationPercent
+      state
+      image { documentId url }
+      master { documentId name photo { url documentId } }
+      user_info { documentId }
+    }
+  }
+`;
+
+// Продукты конкретного мастера (для MyGoods)
+export const GET_PRODUCTS_BY_MASTER = gql`
+  query ProductsByMaster($masterId: ID!, $locale: I18NLocaleCode) {
+    products(
+      filters: { master: { documentId: { eq: $masterId } } }
       pagination: { limit: 250 }
       locale: $locale
     ) {

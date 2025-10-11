@@ -54,14 +54,11 @@ export default function MyOrders() {
   const [showBooked, setShowBooked] = React.useState(true);
   const [showSold, setShowSold] = React.useState(true);
 
-  let items = data?.products || [];
-  // сортируем так, чтобы booked были первее
-  items = [...items].sort((a, b) => {
+  let items = (data?.products || []).slice().sort((a, b) => {
     const A = a.state === "booked" ? 0 : 1;
     const B = b.state === "booked" ? 0 : 1;
     return A - B;
   });
-  // фильтры
   items = items.filter((p) => {
     if (p.state === "booked") return showBooked;
     if (p.state === "sold") return showSold;
@@ -99,13 +96,14 @@ export default function MyOrders() {
         return (
           <CardProduct
             key={p.documentId}
+            documentId={p.documentId}
             title={p.title}
             image={imgUrl}
             description={slateToText(p.description)}
             price={typeof p.price === "number" ? p.price : undefined}
             donationPercent={typeof p.donationPercent === "number" ? p.donationPercent : undefined}
             status={p.state}
-            master={{ name: p?.master?.name, image: masterImage }}
+            master={{ documentId: p?.master?.documentId, name: p?.master?.name, image: masterImage }}
             // без onReserve — это мои заказы
           />
         );

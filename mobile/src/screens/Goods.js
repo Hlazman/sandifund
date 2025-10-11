@@ -82,6 +82,7 @@ export default function Goods() {
         return (
           <CardProduct
             key={p.documentId}
+            documentId={p.documentId}
             title={p.title}
             image={imgUrl}
             description={slateToText(p.description)}
@@ -89,6 +90,7 @@ export default function Goods() {
             donationPercent={typeof p.donationPercent === "number" ? p.donationPercent : undefined}
             status={p.state}
             master={{
+              documentId: p?.master?.documentId,
               name: p?.master?.name,
               image: masterImage,
               onPress: p?.master?.documentId
