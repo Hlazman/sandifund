@@ -13,6 +13,7 @@ import LanguageSelect from "../components/LanguageSelect";
 import Terms from "./Terms";
 import Privacy from "./Privacy";
 
+const API_BASE = (process.env.REACT_APP_GRAPHQL_URL || "").replace(/\/graphql$/, "");
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -349,13 +350,18 @@ export default function Auth() {
 
       {/* Кнопка Google */}
       <div className="mt-4">
-        <a
-          href="#"
+        {/* <a
+          // href="#"
+          // href="https://api.sandifund.com/api/connect/google"
+          href={`${API_BASE}/api/connect/google`}
           className="w-full inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white py-2 font-medium hover:bg-gray-50"
         >
           <img alt="" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="h-5 w-5" />
           {t("auth.continueWithGoogle")}
-        </a>
+        </a> */}
+        <a href={`${API_BASE}/api/connect/google`} className="btn">
+  Continue with Google
+</a>
       </div>
     </div>
   );
