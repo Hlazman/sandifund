@@ -36,6 +36,38 @@ export default {
         'Query.meFull': { auth: true },
       },
     }));
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+
+    if (clientId && clientSecret) {
+      const providersRegistry = strapi.plugin('users-permissions').service('providers-registry');
+      const defaultGoogle = providersRegistry?.get('google');
+
+      if (defaultGoogle) {
+        const providersService = strapi.plugin('users-permissions').service('providers');
+        const defaultCallback = providersService?.buildRedirectUri('google');
+
+        providersRegistry.add('google', {
+          ...defaultGoogle,
+          enabled: true,
+          grantConfig: {
+            ...defaultGoogle.grantConfig,
+            key: clientId,
+            secret: clientSecret,
+            callbackUrl:
+              process.env.GOOGLE_CALLBACK_URL || defaultCallback ||
+              'http://localhost:1338/api/connect/google/callback',
+            scope: ['email', 'profile'],
+          },
+        });
+      } else {
+        strapi.log.warn('Google auth provider definition is missing. Skipped automatic setup.');
+      }
+    } else {
+      strapi.log.warn(
+        'Missing GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET environment variables. Google auth not configured.'
+      );
+    }
   },
 
   /**
