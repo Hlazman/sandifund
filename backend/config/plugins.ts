@@ -1,6 +1,3 @@
-// @ts-ignore Strapi ships the provider without TypeScript declarations
-import googleProvider from '@strapi/plugin-users-permissions/server/providers/google';
-
 export default ({ env }) => ({
   graphql: {
     config: {
@@ -35,25 +32,5 @@ export default ({ env }) => ({
         defaultReplyTo: env('SMTP2GO_REPLYTO', 'support@sandifund.com'),
       },
     },  
-  },
-  'users-permissions': {
-    config: {
-      providers: [
-        {
-          uid: 'google',
-          displayName: 'Google',
-          icon: 'google',
-          createStrategy: googleProvider({
-            clientId: env('GOOGLE_CLIENT_ID'),
-            clientSecret: env('GOOGLE_CLIENT_SECRET'),
-            callbackURL: env(
-              'GOOGLE_CALLBACK_URL',
-              'http://localhost:1338/api/connect/google/callback'
-            ),
-            scope: ['email', 'profile'],
-          }),
-        },
-      ],
-    },
   },
 });
