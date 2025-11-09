@@ -1,8 +1,11 @@
-// src/pages/GoogleRedirect.jsx
 import React, { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-const API_BASE = (process.env.REACT_APP_GRAPHQL_URL || "").replace(/\/graphql$/,"");
+const API_BASE = (process.env.REACT_APP_GRAPHQL_URL || "").replace(
+  /\/graphql$/,
+  ""
+);
+
 
 export default function GoogleRedirect() {
   const nav = useNavigate();

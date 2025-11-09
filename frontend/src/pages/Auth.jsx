@@ -350,18 +350,13 @@ export default function Auth() {
 
       {/* Кнопка Google */}
       <div className="mt-4">
-        {/* <a
-          // href="#"
-          // href="https://api.sandifund.com/api/connect/google"
+        <a
           href={`${API_BASE}/api/connect/google`}
-          className="w-full inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white py-2 font-medium hover:bg-gray-50"
+          className="flex items-center justify-center gap-2 rounded-lg border border-zinc-300 px-4 py-3 text-sm font-bold text-zinc-600 transition-colors hover:bg-zinc-100"
         >
-          <img alt="" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="h-5 w-5" />
-          {t("auth.continueWithGoogle")}
-        </a> */}
-        <a href={`${API_BASE}/api/connect/google`} className="btn">
-  Continue with Google
-</a>
+          <img src="/google.svg" alt="Google" className="h-5 w-5" />
+          <span>{t("auth.continueWithGoogle")}</span>
+        </a>
       </div>
     </div>
   );
