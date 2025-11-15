@@ -83,6 +83,12 @@
     "isFree": {
       "type": "boolean",
       "default": false
+    },
+    "master": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::master.master",
+      "mappedBy": "user_info"
     }
   }
 }
