@@ -34,7 +34,7 @@ export const GET_MY_USER_INFO = gql`
         language
         createdAt
         products { documentId }
-        master { documentId }
+        isMaster
       }
     }
   }

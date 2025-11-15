@@ -1,5 +1,5 @@
-import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Routes, Route, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
@@ -26,8 +26,23 @@ import Booked from "./pages/Booked";
 import MyOrders from "./pages/MyOrders";
 import MyGoods from "./pages/MyGoods";
 import Reports from "./pages/Reports";
+import { useAuth } from "./context/AuthContext";
 
 export default function App() {
+  const { loginWithToken } = useAuth();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const jwt = searchParams.get("jwt");
+    const user = searchParams.get("user");
+    if (jwt && user) {
+      loginWithToken(jwt, true);
+      localStorage.setItem("sf_user", user);
+      navigate("/?loggedIn=true");
+    }
+  }, [searchParams, loginWithToken, navigate]);
+
   return (
     <div className="min-h-full flex flex-col bg-gray-50">
       <Header />
