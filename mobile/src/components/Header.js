@@ -87,7 +87,6 @@ export default function Header({ navigation }) {
   const SECONDARY_ITEMS = [
     { name: "Profile", key: "profile", icon: "person-outline" },
     { name: "MyGoods", key: "myGoods", icon: "bag-outline" },
-    { name: "MyOrders",  key: "orders",  icon: "reader-outline" },
   ];
 
   return (

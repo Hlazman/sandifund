@@ -80,29 +80,27 @@ export default function Goods() {
           : null;
 
         return (
-          <CardProduct
-            key={p.documentId}
-            documentId={p.documentId}
-            title={p.title}
-            image={imgUrl}
-            description={slateToText(p.description)}
-            price={typeof p.price === "number" ? p.price : undefined}
-            donationPercent={typeof p.donationPercent === "number" ? p.donationPercent : undefined}
-            status={p.state}
-            master={{
-              documentId: p?.master?.documentId,
-              name: p?.master?.name,
-              image: masterImage,
-              onPress: p?.master?.documentId
-                ? () => navigation.navigate("Master", { masterId: p.master.documentId, masterName: p.master.name })
-                : undefined,
-            }}
-            reserveLabel={t("card.product.reserve") || "Reserve"}
-            onReserve={
-              p.state === "booked" ? undefined : () => navigation.navigate("Booked", { productId: p.documentId })
-            }
-          />
-        );
+        <CardProduct
+          key={p.documentId}
+          documentId={p.documentId}
+          title={p.title}
+          image={imgUrl}
+          description={slateToText(p.description)}
+          price={typeof p.price === "number" ? p.price : undefined}
+          donationPercent={typeof p.donationPercent === "number" ? p.donationPercent : undefined}
+          status={p.state}
+          master={{
+            documentId: p?.master?.documentId,
+            name: p?.master?.name,
+            image: masterImage,
+            email: p?.master?.email,
+            whatsapp: p?.master?.whatsapp,
+            onPress: p?.master?.documentId
+              ? () => navigation.navigate("Master", { masterId: p.master.documentId, masterName: p.master.name })
+              : undefined,
+          }}
+        />
+      );
       })}
     </ScrollView>
   );

@@ -155,7 +155,7 @@ export default function MyGoods() {
             donationPercent={typeof p.donationPercent === "number" ? p.donationPercent : undefined}
             status={p.state}
             master={{ documentId: p?.master?.documentId, name: p?.master?.name, image: masterImage }}
-            // для владельца в CardProduct появится select; для остальных — кнопка Reserve (если передана)
+            allowStatusChange // только здесь мастер может менять state, в т.ч. на booked
           />
         );
       })}

@@ -197,28 +197,13 @@ export const GET_PRODUCTS = gql`
       donationPercent
       state
       image { documentId url }
-      master { documentId name photo { url documentId } }
-      user_info { documentId }
-    }
-  }
-`;
-
-// Продукты, принадлежащие конкретному user_info (для My Orders)
-export const GET_MY_PRODUCTS = gql`
-  query MyProducts($userInfoId: ID!, $locale: I18NLocaleCode) {
-    products(
-      filters: { user_info: { documentId: { eq: $userInfoId } } }
-      pagination: { limit: 250 }
-      locale: $locale
-    ) {
-      documentId
-      title
-      description
-      price
-      donationPercent
-      state
-      image { documentId url }
-      master { documentId name photo { url documentId } }
+      master {
+        documentId
+        name
+        email
+        whatsapp
+        photo { url documentId }
+      }
       user_info { documentId }
     }
   }

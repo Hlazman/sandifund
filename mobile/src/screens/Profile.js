@@ -123,16 +123,10 @@ export default function Profile() {
             <LanguageSelect />
           </View>
 
-          //TODO {/* Подписка — заглушка */} 
+          {/* TODO: Подписка — заглушка */}
           <View style={{ backgroundColor: "#fff", borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 12, padding: 12 }}>
             <Text style={{ fontWeight: "700", marginBottom: 6 }}>{t("pages.profile.subscription")}</Text>
             <Text style={{ color: "#6b7280" }}>{t("pages.profile.subscriptionDesc")}</Text>
-          </View>
-
-          //TODO {/* Платежи — заглушка */}
-          <View style={{ backgroundColor: "#fff", borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 12, padding: 12 }}>
-            <Text style={{ fontWeight: "700", marginBottom: 6 }}>{t("pages.profile.payment")}</Text>
-            <Text style={{ color: "#6b7280" }}>{t("pages.profile.paymentDesc")}</Text>
           </View>
 
           {/* Email */}

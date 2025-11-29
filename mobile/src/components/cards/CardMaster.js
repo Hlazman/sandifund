@@ -1,7 +1,8 @@
 import React from "react";
 import { View, Text, Image } from "react-native";
 import { useLanguage } from "../../context/LanguageContext";
-import { CardWrap, Placeholder, Field, Button } from "./_CardParts";
+// import { CardWrap, Placeholder, Field, Button } from "./_CardParts";
+import { CardWrap, Placeholder, Button } from "./_CardParts";
 
 export default function CardMaster(props) {
   const {
@@ -56,13 +57,9 @@ export default function CardMaster(props) {
         <Text style={{ color: "#374151", marginTop: 8 }}>{description}</Text>
       ) : null}
 
-      <View style={{ marginTop: 6 }}>
+      {/* <View style={{ marginTop: 6 }}>
         <Field label={L("auth.email", "Email")} value={email} href={email ? `mailto:${email}` : undefined} />
         <Field label="WhatsApp" value={whatsapp} href={waHref} />
-      </View>
-
-      {/* <View style={{ marginTop: 10 }}>
-        <Button title={L("card.master.more", "Подробнее")} onPress={onMore} fullWidth />
       </View> */}
       
     {onMore ? (

@@ -68,16 +68,6 @@ export default function Auth() {
 
       await loginWithToken(token);
 
-      // // если есть UserInfo — обновим там язык
-      // try {
-      //   const res = await apollo.query({ query: GET_MY_USER_INFO, fetchPolicy: "network-only" });
-      //   const ui = res?.data?.meFull?.user_info;
-      //   if (ui?.documentId) {
-      //     globalThis.sf_userInfoId = ui.documentId;
-      //     await updateUserInfo({ variables: { documentId: ui.documentId, data: { language: selectedLang } } });
-      //   }
-      // } catch {}
-
       try {
         const res = await apollo.query({ query: GET_MY_USER_INFO, fetchPolicy: "network-only" });
         let ui = res?.data?.meFull?.user_info;
@@ -285,12 +275,6 @@ export default function Auth() {
           </TouchableOpacity>
         </View>
       )}
-
-      {/* Google заглушка */}      
-      <TouchableOpacity style={s.googleBtn}>
-        <Ionicons name="logo-google" size={20} style={{ marginRight: 8 }} />
-        <Text style={{ fontWeight: "600" }}>{t("auth.continueWithGoogle")}</Text>
-      </TouchableOpacity>
 
       {/* Privacy modal */}
       <Modal

@@ -17,7 +17,7 @@ import Footer from "./src/components/Footer";
 import Sticers from "./src/screens/Sticers";
 import Payment from "./src/screens/Payment";
 import Profile from "./src/screens/Profile";
-import Fonds from "./src/screens/Fonds"; // используем тот же компонент, но маршрут называется "Funds"
+import Fonds from "./src/screens/Fonds";
 import Goods from "./src/screens/Goods";
 import FAQ from "./src/screens/FAQ";
 import ForgotPassword from "./src/screens/ForgotPassword";
@@ -32,8 +32,6 @@ import Masters from "./src/screens/Masters";
 import MyGoods from "./src/screens/MyGoods";
 import Reports from "./src/screens/Reports";
 import Master from "./src/screens/Master";
-import Booked from "./src/screens/Booked";
-import MyOrders from "./src/screens/MyOrders";
 
 const Stack = createNativeStackNavigator();
 
@@ -61,11 +59,7 @@ const linking = {
       ResetPassword: { path: "reset-password", parse: { code: (v) => v } },
       EmailConfirmation: { path: "email-confirmation", parse: { confirmation: (v) => v } },
       CheckEmail: "check-email",
-
-      // ▼ добавлено — только эти три маршрута
       Master: "master/:masterId",
-      Booked: "booked/:productId",
-      MyOrders: "my-orders",
     },
   },
 };
@@ -96,10 +90,8 @@ function AuthedStack() {
       <Stack.Screen name="Terms" component={Terms} />
       <Stack.Screen name="Privacy" component={Privacy} />
       <Stack.Screen name="MyGoods" component={MyGoods} />
-      <Stack.Screen name="MyOrders" component={MyOrders} />
       <Stack.Screen name="Reports" component={Reports} />
       <Stack.Screen name="Master" component={Master} />
-      <Stack.Screen name="Booked" component={Booked} />
       <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ headerShown: true, title: "Change password" }} />
     </Stack.Navigator>
   );
