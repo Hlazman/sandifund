@@ -21,8 +21,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 import Masters from "./pages/Masters";
 import Master from "./pages/Master";
-import Booked from "./pages/Booked";
-import MyOrders from "./pages/MyOrders";
 import MyGoods from "./pages/MyGoods";
 import Reports from "./pages/Reports";
 
@@ -122,28 +120,10 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-
-          <Route
-            path="/my-orders"
-            element={
-              <ProtectedRoute>
-                  <MyOrders />
-              </ProtectedRoute>
-            }
-          />
           
           <Route
             path="/orders"
             element={<Navigate to="/my-orders" replace />}
-          />
-
-          <Route
-            path="/booked/:id"
-            element={
-              <ProtectedRoute>
-                <Booked />
-              </ProtectedRoute>
-            }
           />
 
           <Route

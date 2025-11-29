@@ -9,7 +9,6 @@ import {
   PiggyBank,
   Package,
   HelpCircle,
-  ClipboardList,
   FileText,
   ShieldCheck,
   LogOut,
@@ -44,7 +43,6 @@ export default function Header() {
   const SECONDARY_ITEMS = [
     { to: "/profile", key: "profile", Icon: User },
     { to: "/my-goods", key: "myGoods", Icon: ShoppingBag },
-    { to: "/orders", key: "orders", Icon: ClipboardList },
   ];
 
   return (

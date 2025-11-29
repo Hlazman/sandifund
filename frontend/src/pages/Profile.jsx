@@ -101,12 +101,6 @@ export default function Profile() {
         <div className="text-sm text-gray-600">{t("pages.profile.subscriptionDesc")}</div>
       </div>
 
-      {/* TODO Платежи — заглушка */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-4">
-        <div className="font-semibold mb-1">{t("pages.profile.payment")}</div>
-        <div className="text-sm text-gray-600">{t("pages.profile.paymentDesc")}</div>
-      </div>
-
       {/* Email */}
       <div className="bg-white rounded-2xl border border-gray-200 p-4 space-y-2">
         <div className="font-semibold">{t("pages.profile.changeEmail")}</div>

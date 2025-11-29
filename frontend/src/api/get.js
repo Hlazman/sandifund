@@ -161,7 +161,12 @@ export const GET_PRODUCTS = gql`
       donationPercent
       image { documentId url }
       locale
-      master { documentId name }
+      master {
+        documentId
+        name
+        email
+        whatsapp
+      }
       price
       sold
       state
@@ -170,17 +175,6 @@ export const GET_PRODUCTS = gql`
     }
   }
 `;
-
-// export const GET_MY_PRODUCTS_IDS = gql`
-//   query Query {
-//     meFull {
-//       user_info {
-//         documentId
-//         products { documentId }
-//       }
-//     }
-//   }
-// `;
 
 export const GET_PRODUCTS_BY_MASTER = gql`
   query ProductsByMaster($pagination: PaginationArg, $masterId: ID!) {
@@ -193,7 +187,12 @@ export const GET_PRODUCTS_BY_MASTER = gql`
       donationPercent
       image { documentId url }
       locale
-      master { documentId name }
+      master {
+        documentId
+        name
+        email
+        whatsapp
+      }
       price
       sold
       state

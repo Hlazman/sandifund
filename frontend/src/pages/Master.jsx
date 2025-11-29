@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client/react";
 import { GET_MASTERS, GET_PRODUCTS } from "../api/get";
 import { useLanguage } from "../context/LanguageContext";
@@ -8,7 +8,12 @@ import CardProduct from "../components/cards/CardProduct";
 function RichText({ value }) {
   try {
     if (!value) return null;
-    if (typeof value === "string") return <p className="text-sm text-gray-700 whitespace-pre-wrap">{value}</p>;
+    if (typeof value === "string")
+      return (
+        <p className="text-sm text-gray-700 whitespace-pre-wrap">
+          {value}
+        </p>
+      );
     const nodes = Array.isArray(value) ? value : value.children || [];
     return (
       <div className="space-y-1 text-sm text-gray-700">
@@ -19,20 +24,28 @@ function RichText({ value }) {
             if (ch.italic) text = <em key={j}>{text}</em>;
             return <span key={j}>{text}</span>;
           });
-          return <p key={i} className="whitespace-pre-wrap">{children}</p>;
+          return (
+            <p key={i} className="whitespace-pre-wrap">
+              {children}
+            </p>
+          );
         })}
       </div>
     );
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 
 export default function Master() {
   const { id } = useParams();
   const { t } = useLanguage();
-  const navigate = useNavigate();
 
   const { data: mData } = useQuery(GET_MASTERS, {
-    variables: { pagination: { limit: 100 }, productsPagination2: { limit: 100 } },
+    variables: {
+      pagination: { limit: 100 },
+      productsPagination2: { limit: 100 },
+    },
   });
 
   const { data: pData } = useQuery(GET_PRODUCTS, {
@@ -41,21 +54,33 @@ export default function Master() {
 
   const GRAPHQL_URL = process.env.REACT_APP_GRAPHQL_URL || "";
   const API_BASE = GRAPHQL_URL.replace(/\/graphql\/?$/, "");
-  const resolveUrl = (url) => (url && !url.startsWith("http") ? `${API_BASE}${url}` : url);
+  const resolveUrl = (url) =>
+    url && !url.startsWith("http") ? `${API_BASE}${url}` : url;
 
-  const master = useMemo(() => (mData?.masters || []).find((x) => x.documentId === id), [mData, id]);
+  const master = useMemo(
+    () => (mData?.masters || []).find((x) => x.documentId === id),
+    [mData, id]
+  );
 
   const products = useMemo(() => {
     const all = pData?.products || [];
-    return all.filter((p) => p.master?.documentId === id && p.state !== "sold" && p.state !== "notValid");
+    return all.filter(
+      (p) =>
+        p.master?.documentId === id &&
+        p.state !== "sold" &&
+        p.state !== "notValid"
+    );
   }, [pData, id]);
 
   const productsCount = useMemo(() => {
     const list = master?.products || [];
-    return list.filter(p => p?.state === "inStock" || p?.state === "booked").length;
+    return list.filter(
+      (p) => p?.state === "inStock" || p?.state === "booked"
+    ).length;
   }, [master]);
 
-  if (!master) return <div className="max-w-6xl mx-auto p-4">Loading…</div>;
+  if (!master)
+    return <div className="max-w-6xl mx-auto p-4">Loading…</div>;
 
   const photo = resolveUrl(master?.photo?.url);
 
@@ -65,9 +90,15 @@ export default function Master() {
       <div className="grid grid-cols-1 md:grid-cols-[320px_minmax(0,1fr)] gap-6 items-start">
         <div>
           {photo ? (
-            <img src={photo} alt={master.name} className="w-full aspect-[4/3] object-cover rounded-xl border border-gray-200" />
+            <img
+              src={photo}
+              alt={master.name}
+              className="w-full aspect-[4/3] object-cover rounded-xl border border-gray-200"
+            />
           ) : (
-            <div className="w-full aspect-[4/3] rounded-xl bg-gray-100 border border-gray-200 grid place-items-center text-gray-500 text-sm select-none">no photo</div>
+            <div className="w-full aspect-[4/3] rounded-xl bg-gray-100 border border-gray-200 grid place-items-center text-gray-500 text-sm select-none">
+              no photo
+            </div>
           )}
         </div>
 
@@ -75,32 +106,22 @@ export default function Master() {
           <div className="flex items-start justify-between gap-3">
             <h1 className="text-2xl font-semibold">{master.name}</h1>
             <span className="text-sm text-gray-600">
-              {t("card.master.products", "products")}: <b>{productsCount}</b>
+              {t("card.master.products", "products")}:{" "}
+              <b>{productsCount}</b>
             </span>
           </div>
 
-          <div className="mt-2"><RichText value={master.description} /></div>
-
-          <div className="mt-3 grid gap-1.5 text-sm">
-            {master.email && (
-              <div>
-                <span className="text-gray-500">Email: </span>
-                <a href={`mailto:${master.email}`} className="text-indigo-600 hover:underline">{master.email}</a>
-              </div>
-            )}
-            {master.whatsapp && (
-              <div>
-                <span className="text-gray-500">WhatsApp: </span>
-                <a href={`https://wa.me/${master.whatsapp}`} target="_blank" rel="noreferrer" className="text-indigo-600 hover:underline">{master.whatsapp}</a>
-              </div>
-            )}
+          <div className="mt-2">
+            <RichText value={master.description} />
           </div>
         </div>
       </div>
 
       {/* продукты мастера */}
       <section>
-        <h2 className="text-xl font-semibold mb-3">{t("header.items.goods", "Goods")}</h2>
+        <h2 className="text-xl font-semibold mb-3">
+          {t("header.items.goods", "Goods")}
+        </h2>
         {products.length === 0 ? (
           <div className="text-gray-500">No products yet</div>
         ) : (
@@ -108,16 +129,20 @@ export default function Master() {
             {products.map((p) => (
               <CardProduct
                 key={p.documentId}
+                documentId={p.documentId}
                 title={p.title}
                 image={p.image?.url}
                 description={p.description}
                 price={p.price}
                 donationPercent={p.donationPercent}
                 status={p.state}
-                master={{ name: master.name, href: `/masters/${master.documentId}` }}
-                reserveLabel={t("card.product.reserve", "Reserve")}
-                reserveDisabled={p.state === "booked"}
-                onReserve={() => navigate(`/booked/${p.documentId}`)}
+                master={{
+                  documentId: master.documentId,
+                  name: master.name,
+                  href: `/masters/${master.documentId}`,
+                  email: master.email,
+                  whatsapp: master.whatsapp,
+                }}
               />
             ))}
           </div>
