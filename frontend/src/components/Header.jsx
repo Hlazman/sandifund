@@ -91,7 +91,7 @@ export default function Header() {
               <Dialog.Portal>
                 <Dialog.Overlay
                   data-overlay
-                  className="fixed inset-0 z-40 bg-black/40 backdrop-blur-[2px]"
+                  className="fixed inset-0 z-40 bg-black/40"
                 />
 
                 <Dialog.Content
