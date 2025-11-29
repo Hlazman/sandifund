@@ -17,7 +17,6 @@ import ResetPassword from "./pages/ResetPassword";
 import EmailConfirmation from "./pages/EmailConfirmation";
 import CheckEmail from "./pages/CheckEmail";
 import ChangePassword from "./pages/ChangePassword";
-import GoogleRedirect from "./pages/GoogleRedirect";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import Masters from "./pages/Masters";
@@ -42,7 +41,6 @@ export default function App() {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/email-confirmation" element={<EmailConfirmation />} />
           <Route path="/check-email" element={<CheckEmail />} />
-          <Route path="/connect/google/redirect" element={<GoogleRedirect />} />
 
           {/* Защищённые */}
           <Route
