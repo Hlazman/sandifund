@@ -78,9 +78,9 @@ export default function MyGoods() {
           {"\n"}
           <Text
             style={{ textDecorationLine: "underline" }}
-            onPress={() => Linking.openURL("mailto:cooperation@sandifund.com")}
+            onPress={() => Linking.openURL("mailto:art-charity@sandifund.com")}
           >
-            cooperation@sandifund.com
+            art-charity@sandifund.com
           </Text>
         </Text>
       </View>

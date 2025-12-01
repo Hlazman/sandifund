@@ -22,7 +22,7 @@
 //           {t("auth.confirm.checkEmail")}{email ? ` (${email})` : ""}.
 //         </Text>
 //         <Text style={{ textAlign: dir === "rtl" ? "right" : "left" }}>
-//           {t("auth.confirm.noEmailPrefix")} <Text style={{ textDecorationLine: "underline" }}>support@sandifund.com</Text>.
+//           {t("auth.confirm.noEmailPrefix")} <Text style={{ textDecorationLine: "underline" }}>art-charity@sandifund.com</Text>.
 //         </Text>
 //         <TouchableOpacity onPress={() => nav.replace("Auth")} style={{ marginTop: 12, borderWidth: 1, borderRadius: 10, paddingVertical: 12, alignItems: "center" }}>
 //           <Text style={{ fontWeight: "700" }}>{t("auth.backToLogin")}</Text>
@@ -81,7 +81,7 @@ export default function CheckEmail() {
           {t("auth.confirm.checkEmail")}{email ? ` (${email})` : ""}.
         </Text>
         <Text style={{ marginTop: 6, textAlign: isRTL ? "right" : "left" }}>
-          {t("auth.confirm.noEmailPrefix")} <Text style={{ textDecorationLine: "underline" }}>support@sandifund.com</Text>.
+          {t("auth.confirm.noEmailPrefix")} <Text style={{ textDecorationLine: "underline" }}>art-charity@sandifund.com</Text>.
         </Text>
       </View>
 

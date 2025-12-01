@@ -276,7 +276,7 @@ export default function Booked() {
         >
           <Text style={{ color: "#1e3a8a" }}>
             {t("pages.booked.cancelNote") ||
-              "If you decide to cancel the reservation, please notify the Master via any contact listed on their profile. Or write to us at support@sandifund.com."}
+              "If you decide to cancel the reservation, please notify the Master via any contact listed on their profile. Or write to us at art-charity@sandifund.com."}
           </Text>
         </View>
       </View>
