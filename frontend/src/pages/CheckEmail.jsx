@@ -23,7 +23,7 @@ export default function CheckEmail() {
         </p>
         <p className="text-sm text-gray-700">
           {t("auth.confirm.noEmailPrefix")}{" "}
-          <a className="underline" href="mailto:support@sandifund.com">support@sandifund.com</a>.
+          <a className="underline" href="mailto:art-charity@sandifund.com">art-charity@sandifund.com</a>.
         </p>
 
         <button

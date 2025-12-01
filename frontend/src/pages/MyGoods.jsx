@@ -49,7 +49,7 @@ export default function MyGoods() {
         <h1 className="text-2xl font-semibold">{t("pages.myGoods.title", "My goods")}</h1>
         <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 text-amber-800">
           {t("pages.myGoods.notMaster", "To become a master, write to")}{" "}
-          <a className="underline" href="mailto:support@sandifund.com">support@sandifund.com</a>
+          <a className="underline" href="mailto:art-charity@sandifund.com">art-charity@sandifund.com</a>
         </div>
       </div>
     );
