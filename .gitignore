@@ -1,0 +1,41 @@
+# Node / deps
+**/node_modules/
+
+# Build / cache
+**/build/
+**/dist/
+**/.cache/
+**/.tmp/
+coverage/
+
+# Frontend (CRA)
+frontend/.env.local
+
+# Mobile (Expo)
+mobile/.env
+mobile/.expo/
+mobile/.expo-shared/
+mobile/web-build/
+mobile/dist/
+mobile/build/
+mobile/android/
+mobile/ios/
+mobile/sandifund-upload-keystore.jks
+
+# Backend (если появится)
+backend/.env
+backend/.cache/
+backend/.tmp/
+backend/build/
+backend/public/uploads/
+backend/exports/
+backend/*.sqlite*
+backend/*.db
+
+# Logs / OS / IDE / Metro
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.metro-health-check*
