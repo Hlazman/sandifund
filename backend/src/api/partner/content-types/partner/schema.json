@@ -1,10 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "payment_methods",
+  "collectionName": "partners",
   "info": {
-    "singularName": "payment-method",
-    "pluralName": "payment-methods",
-    "displayName": "PaymentMethod"
+    "singularName": "partner",
+    "pluralName": "partners",
+    "displayName": "Partner"
   },
   "options": {
     "draftAndPublish": false
@@ -23,16 +23,36 @@
         }
       }
     },
-    "paymentSystemId": {
-      "type": "string",
+    "logo": {
+      "type": "media",
       "pluginOptions": {
         "i18n": {
           "localized": false
         }
-      }
+      },
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
     },
     "description": {
+      "type": "blocks",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "link": {
       "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "data": {
+      "type": "json",
       "pluginOptions": {
         "i18n": {
           "localized": true

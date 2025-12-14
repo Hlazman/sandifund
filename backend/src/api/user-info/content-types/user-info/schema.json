@@ -42,30 +42,6 @@
       "type": "boolean",
       "default": true
     },
-    "products": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::product.product",
-      "mappedBy": "user_info"
-    },
-    "notifications": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::notification.notification",
-      "mappedBy": "user_info"
-    },
-    "orders": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::order.order",
-      "mappedBy": "user_info"
-    },
-    "transactions": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::transaction.transaction",
-      "mappedBy": "user_info"
-    },
     "selected_funds": {
       "type": "relation",
       "relation": "oneToMany",

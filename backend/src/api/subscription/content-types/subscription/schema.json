@@ -40,17 +40,6 @@
           "localized": true
         }
       }
-    },
-    "transactions": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::transaction.transaction",
-      "mappedBy": "subscription"
-    },
-    "paymentMethod": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::payment-method.payment-method"
     }
   }
 }

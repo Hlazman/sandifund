@@ -61,15 +61,6 @@
       },
       "min": 0
     },
-    "sold": {
-      "type": "boolean",
-      "pluginOptions": {
-        "i18n": {
-          "localized": false
-        }
-      },
-      "default": false
-    },
     "master": {
       "type": "relation",
       "relation": "manyToOne",
@@ -80,12 +71,6 @@
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::fund.fund",
-      "inversedBy": "products"
-    },
-    "user_info": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::user-info.user-info",
       "inversedBy": "products"
     },
     "state": {

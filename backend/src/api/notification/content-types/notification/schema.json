@@ -31,24 +31,6 @@
         }
       }
     },
-    "isMass": {
-      "type": "boolean",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      },
-      "default": false
-    },
-    "isRead": {
-      "type": "boolean",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      },
-      "default": false
-    },
     "link": {
       "type": "string",
       "pluginOptions": {
@@ -56,12 +38,6 @@
           "localized": true
         }
       }
-    },
-    "user_info": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::user-info.user-info",
-      "inversedBy": "notifications"
     }
   }
 }
