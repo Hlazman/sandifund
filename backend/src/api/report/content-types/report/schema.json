@@ -56,6 +56,14 @@
       "relation": "manyToOne",
       "target": "api::fund.fund",
       "inversedBy": "reports"
+    },
+    "date": {
+      "type": "date",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }
