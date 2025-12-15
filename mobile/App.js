@@ -32,6 +32,8 @@ import Masters from "./src/screens/Masters";
 import MyGoods from "./src/screens/MyGoods";
 import Reports from "./src/screens/Reports";
 import Master from "./src/screens/Master";
+import About from "./src/screens/About";
+import Partners from "./src/screens/Partners";
 
 const Stack = createNativeStackNavigator();
 
@@ -88,6 +90,8 @@ function AuthedStack() {
       <Stack.Screen name="Masters" component={Masters} />
       <Stack.Screen name="FAQ" component={FAQ} />
       <Stack.Screen name="Terms" component={Terms} />
+      <Stack.Screen name="About" component={About} />
+      <Stack.Screen name="Partners" component={Partners} />
       <Stack.Screen name="Privacy" component={Privacy} />
       <Stack.Screen name="MyGoods" component={MyGoods} />
       <Stack.Screen name="Reports" component={Reports} />
@@ -107,6 +111,8 @@ function UnauthedStack() {
       <Stack.Screen name="ResetPassword" component={ResetPassword} />
       <Stack.Screen name="EmailConfirmation" component={EmailConfirmation} />
       <Stack.Screen name="CheckEmail" component={CheckEmail} />
+      <Stack.Screen name="About" component={About} />
+      <Stack.Screen name="Partners" component={Partners} />
     </Stack.Navigator>
   );
 }

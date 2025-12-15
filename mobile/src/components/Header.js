@@ -80,6 +80,8 @@ export default function Header({ navigation }) {
     { name: "Goods",   key: "goods",   icon: "cube-outline" },
     { name: "Masters", key: "masters", icon: "ribbon-outline" },
     { name: "FAQ",     key: "faq",     icon: "help-circle-outline" },
+    { name: "About",    key: "about",    icon: "information-circle-outline" },
+    { name: "Partners", key: "partners", icon: "people-circle-outline" },
     { name: "Terms",   key: "terms",   icon: "document-text-outline" },
     { name: "Privacy", key: "privacy", icon: "shield-checkmark-outline" },
   ];
