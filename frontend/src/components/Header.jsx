@@ -14,6 +14,8 @@ import {
   LogOut,
   Crown,
   ShoppingBag,
+  Info,
+  Handshake
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
@@ -31,10 +33,12 @@ export default function Header() {
   // Группа 1 (верхняя)
   const MAIN_ITEMS = [
     { to: "/", key: "sticers", Icon: Sparkles },
-    { to: "/funds", key: "funds", Icon: PiggyBank }, // Fonds → Funds
+    { to: "/funds", key: "funds", Icon: PiggyBank },
     { to: "/goods", key: "goods", Icon: Package },
-    { to: "/masters", key: "masters", Icon: Crown }, // новая страница
+    { to: "/masters", key: "masters", Icon: Crown },
     { to: "/faq", key: "faq", Icon: HelpCircle },
+    { key: "about", to: "/about", Icon: Info  },
+    { key: "partners", to: "/partners", Icon: Handshake  },
     { to: "/terms", key: "terms", Icon: FileText },
     { to: "/privacy", key: "privacy", Icon: ShieldCheck },
   ];

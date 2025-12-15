@@ -11,6 +11,8 @@ import Goods from "./pages/Goods";
 import FAQ from "./pages/FAQ";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
+import About from "./pages/About";
+import Partners from "./pages/Partners";
 import Auth from "./pages/Auth";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
@@ -39,6 +41,9 @@ export default function App() {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/email-confirmation" element={<EmailConfirmation />} />
           <Route path="/check-email" element={<CheckEmail />} />
+
+          <Route path="/about" element={<About />} />
+          <Route path="/partners" element={<Partners />} />
 
           {/* Защищённые */}
           <Route

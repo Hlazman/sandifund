@@ -201,3 +201,28 @@ export const GET_PRODUCTS_BY_MASTER = gql`
     }
   }
 `;
+
+export const GET_ABOUT = gql`
+  query About($locale: I18NLocaleCode) {
+    about(locale: $locale) {
+      documentId
+      text
+    }
+  }
+`;
+
+export const GET_PARTNERS = gql`
+  query Partners($pagination: PaginationArg, $locale: I18NLocaleCode) {
+    partners(pagination: $pagination, locale: $locale) {
+      data
+      description
+      documentId
+      link
+      logo {
+        url
+        documentId
+      }
+      title
+    }
+  }
+`;
