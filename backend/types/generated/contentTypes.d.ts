@@ -1416,6 +1416,10 @@ export interface ApiUserInfoUserInfo extends Struct.CollectionTypeSchema {
       'api::user-info.user-info'
     > &
       Schema.Attribute.Private;
+    notifications: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::notification.notification'
+    >;
     publishedAt: Schema.Attribute.DateTime;
     selected_funds: Schema.Attribute.Relation<'oneToMany', 'api::fund.fund'>;
     subscriptions: Schema.Attribute.Relation<
