@@ -54,7 +54,6 @@ export const UPDATE_PRODUCT = gql`
     updateProduct(documentId: $documentId, data: $data) {
       documentId
       state
-      user_info { documentId }
     }
   }
 `;

@@ -45,8 +45,6 @@ export const GET_MY_USER_INFO = gql`
 export const GET_NOTIFICATIONS = gql`
   query Notifications($pagination: PaginationArg, $locale: I18NLocaleCode) {
     notifications(pagination: $pagination, locale: $locale) {
-      isRead
-      isMass
       documentId
       title
       text
@@ -147,7 +145,16 @@ export const GET_MASTERS = gql`
       locale
       name
       photo { documentId url }
-      products(pagination: $productsPagination2) { documentId title state }
+      products(pagination: $productsPagination2) {
+        documentId
+        title
+        description
+        donationPercent
+        image { documentId url }
+        locale
+        price
+        state
+      }
       whatsapp
     }
   }
@@ -168,39 +175,37 @@ export const GET_PRODUCTS = gql`
         whatsapp
       }
       price
-      sold
       state
       title
-      user_info { documentId }
     }
   }
 `;
 
-export const GET_PRODUCTS_BY_MASTER = gql`
-  query ProductsByMaster($pagination: PaginationArg, $masterId: ID!) {
-    products(
-      pagination: $pagination
-      filters: { master: { documentId: { eq: $masterId } } }
-    ) {
-      documentId
-      description
-      donationPercent
-      image { documentId url }
-      locale
-      master {
-        documentId
-        name
-        email
-        whatsapp
-      }
-      price
-      sold
-      state
-      title
-      user_info { documentId }
-    }
-  }
-`;
+// export const GET_PRODUCTS_BY_MASTER = gql`
+//   query ProductsByMaster($pagination: PaginationArg, $masterId: ID!) {
+//     products(
+//       pagination: $pagination
+//       filters: { master: { documentId: { eq: $masterId } } }
+//     ) {
+//       documentId
+//       description
+//       donationPercent
+//       image { documentId url }
+//       locale
+//       master {
+//         documentId
+//         name
+//         email
+//         whatsapp
+//       }
+//       price
+//       sold
+//       state
+//       title
+//       user_info { documentId }
+//     }
+//   }
+// `;
 
 export const GET_ABOUT = gql`
   query About($locale: I18NLocaleCode) {

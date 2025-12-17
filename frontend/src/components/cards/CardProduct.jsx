@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { useLanguage } from "../../context/LanguageContext";
 import { ImageBox, Badge, Field, statusKeyFrom } from "./_CardParts";
-import { GET_MY_USER_INFO, GET_PRODUCTS_BY_MASTER } from "../../api/get";
+// import { GET_MY_USER_INFO, GET_PRODUCTS_BY_MASTER } from "../../api/get";
+import { GET_MY_USER_INFO } from "../../api/get";
 import { UPDATE_PRODUCT } from "../../api/mutations";
 
 function RichText({ value }) {
@@ -160,30 +161,59 @@ export default function CardProduct(props) {
     setSelectValue("");
   };
 
+  // const confirmAction = async () => {
+  //   if (!pendingState) return;
+
+  //   const data = { state: pendingState };
+  //   if (pendingState === "inStock" || pendingState === "notValid") {
+  //     // при возврате в inStock/notValid отвязываем user_info
+  //     data.user_info = null;
+  //   }
+
+  //   try {
+  //     await mutate({
+  //       variables: { documentId, data },
+  //       refetchQueries: myMasterId
+  //         ? [
+  //             {
+  //               query: GET_PRODUCTS_BY_MASTER,
+  //               variables: {
+  //                 pagination: { limit: 100 },
+  //                 masterId: myMasterId,
+  //               },
+  //             },
+  //           ]
+  //         : [],
+  //       awaitRefetchQueries: false,
+  //       optimisticResponse: {
+  //         updateProduct: {
+  //           __typename: "Product",
+  //           documentId,
+  //           state: pendingState,
+  //         },
+  //       },
+  //     });
+  //     setLocalState(pendingState);
+  //   } catch (err) {
+  //     if (
+  //       !/aborted/i.test(err?.message || "") &&
+  //       err?.name !== "AbortError"
+  //     ) {
+  //       console.error(err);
+  //     }
+  //   } finally {
+  //     closeConfirm();
+  //   }
+  // };
+
   const confirmAction = async () => {
     if (!pendingState) return;
 
     const data = { state: pendingState };
-    if (pendingState === "inStock" || pendingState === "notValid") {
-      // при возврате в inStock/notValid отвязываем user_info
-      data.user_info = null;
-    }
 
     try {
       await mutate({
         variables: { documentId, data },
-        refetchQueries: myMasterId
-          ? [
-              {
-                query: GET_PRODUCTS_BY_MASTER,
-                variables: {
-                  pagination: { limit: 100 },
-                  masterId: myMasterId,
-                },
-              },
-            ]
-          : [],
-        awaitRefetchQueries: false,
         optimisticResponse: {
           updateProduct: {
             __typename: "Product",
