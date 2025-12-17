@@ -51,8 +51,6 @@ export const GET_USER_INFO = gql`
 export const GET_NOTIFICATIONS = gql`
   query Notifications($pagination: PaginationArg, $locale: I18NLocaleCode) {
     notifications(pagination: $pagination, locale: $locale) {
-      isRead
-      isMass
       documentId
       title
       text
@@ -149,6 +147,8 @@ export const GET_MASTERS = gql`
       name
       email
       whatsapp
+      otherContact
+      messenger
       description
       photo { url documentId }
       products(filters: { state: { in: ["inStock", "booked"] } }, pagination: { limit: 250 }) {
@@ -166,6 +166,8 @@ export const GET_MASTER = gql`
       name
       email
       whatsapp
+      otherContact
+      messenger
       description
       photo { url documentId }
       products(
@@ -180,7 +182,6 @@ export const GET_MASTER = gql`
         state
         image { url documentId }
         master { documentId name photo { url documentId } }
-        user_info { documentId }
       }
     }
   }
@@ -204,28 +205,6 @@ export const GET_PRODUCTS = gql`
         whatsapp
         photo { url documentId }
       }
-      user_info { documentId }
-    }
-  }
-`;
-
-// Продукты конкретного мастера (для MyGoods)
-export const GET_PRODUCTS_BY_MASTER = gql`
-  query ProductsByMaster($masterId: ID!, $locale: I18NLocaleCode) {
-    products(
-      filters: { master: { documentId: { eq: $masterId } } }
-      pagination: { limit: 250 }
-      locale: $locale
-    ) {
-      documentId
-      title
-      description
-      price
-      donationPercent
-      state
-      image { documentId url }
-      master { documentId name photo { url documentId } }
-      user_info { documentId }
     }
   }
 `;

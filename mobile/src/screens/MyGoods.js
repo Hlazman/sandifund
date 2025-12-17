@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, ScrollView, ActivityIndicator, Linking, Pressable } from "react-native";
 import { useQuery } from "@apollo/client/react";
-import { GET_MY_USER_INFO, GET_PRODUCTS_BY_MASTER } from "../api/get";
+import { GET_MY_USER_INFO, GET_MASTER } from "../api/get";
 import { useLanguage } from "../context/LanguageContext";
 import CardProduct from "../components/cards/CardProduct";
 
@@ -44,9 +44,9 @@ export default function MyGoods() {
   const { data: uiData, loading: uiLoading } = useQuery(GET_MY_USER_INFO, { fetchPolicy: "cache-first" });
   const masterId = uiData?.meFull?.user_info?.master?.documentId || null;
 
-  const { data, loading, error } = useQuery(GET_PRODUCTS_BY_MASTER, {
+  const { data, loading, error } = useQuery(GET_MASTER, {
     skip: !masterId,
-    variables: { masterId, locale },
+    variables: { documentId: masterId, locale },
     fetchPolicy: "cache-and-network",
   });
 
@@ -92,10 +92,22 @@ export default function MyGoods() {
     error?.networkError?.name === "AbortError" ||
     /aborted/i.test(error?.message || "");
 
-  let items = (data?.products || []).slice().sort((a, b) => {
-    const rank = (s) => (s === "booked" ? 0 : s === "sold" ? 1 : s === "notValid" ? 2 : s === "inStock" ? 3 : 4);
+  const products = Array.isArray(data?.master?.products) ? data.master.products : [];
+
+  let items = products.slice().sort((a, b) => {
+    const rank = (s) =>
+      s === "booked"
+        ? 0
+        : s === "sold"
+        ? 1
+        : s === "notValid"
+        ? 2
+        : s === "inStock"
+        ? 3
+        : 4;
     return rank(a.state) - rank(b.state);
   });
+
   items = items.filter((p) => {
     if (p.state === "booked")   return showBooked;
     if (p.state === "sold")     return showSold;

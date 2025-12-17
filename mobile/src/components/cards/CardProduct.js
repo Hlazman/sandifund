@@ -11,7 +11,7 @@ import {
   statusKeyFrom,
   openLink,
 } from "./_CardParts";
-import { GET_MY_USER_INFO, GET_PRODUCTS_BY_MASTER, GET_PRODUCTS } from "../../api/get";
+import { GET_MY_USER_INFO, GET_MASTER, GET_PRODUCTS } from "../../api/get";
 import { UPDATE_PRODUCT } from "../../api/mutations";
 
 export default function CardProduct(props) {
@@ -87,18 +87,15 @@ export default function CardProduct(props) {
     if (!pendingState) return;
     const data = { state: pendingState };
 
-    // при inStock / notValid — отвязываем user_info
-    if (pendingState === "inStock" || pendingState === "notValid") {
-      data.user_info = null;
-    }
-
     try {
       await mutate({
         variables: { documentId, data },
         refetchQueries: [
+          // обновляем данные мастера с его продуктами (MyGoods, Master)
           ...(myMasterId
-            ? [{ query: GET_PRODUCTS_BY_MASTER, variables: { masterId: myMasterId, locale } }]
+            ? [{ query: GET_MASTER, variables: { documentId: myMasterId, locale } }]
             : []),
+          // и общий список товаров для экрана Goods
           {
             query: GET_PRODUCTS,
             variables: {
@@ -295,8 +292,11 @@ export default function CardProduct(props) {
 
   const masterEmail = master?.email || null;
   const masterWhatsapp = master?.whatsapp || null;
+  const masterOtherContact = master?.otherContact || null;
+  const masterMessenger = master?.messenger || null;
 
   const mailHref = masterEmail ? `mailto:${masterEmail}` : null;
+  
   const waHref = React.useMemo(() => {
     if (!masterWhatsapp) return null;
     const raw = masterWhatsapp.trim();
@@ -307,7 +307,24 @@ export default function CardProduct(props) {
     return `https://wa.me/${digits}`;
   }, [masterWhatsapp]);
 
-  const hasContact = !!(mailHref || waHref);
+  const otherHref = React.useMemo(() => {
+    if (!masterOtherContact) return null;
+    const raw = masterOtherContact.trim();
+    if (!raw) return null;
+    if (/^https?:\/\//i.test(raw)) return raw;
+    return `https://${raw}`;
+  }, [masterOtherContact]);
+
+  const messengerHref = React.useMemo(() => {
+    if (!masterMessenger) return null;
+    const raw = masterMessenger.trim();
+    if (!raw) return null;
+    if (/^https?:\/\//i.test(raw)) return raw;
+    return `https://m.me/${raw.replace(/^@/, "")}`;
+  }, [masterMessenger]);
+  
+  // const hasContact = !!(mailHref || waHref);
+  const hasContact = !!(mailHref || waHref || otherHref || messengerHref);
   const [contactOpen, setContactOpen] = React.useState(false);
 
   const ContactSelect = () =>
@@ -392,6 +409,40 @@ export default function CardProduct(props) {
                 })}
               >
                 <Text style={{ fontSize: 16 }}>{L("auth.email", "Email")}</Text>
+              </Pressable>
+            ) : null}
+
+            {messengerHref ? (
+              <Pressable
+                onPress={async () => {
+                  setContactOpen(false);
+                  await openLink(messengerHref);
+                }}
+                style={({ pressed }) => ({
+                  paddingVertical: 12,
+                  paddingHorizontal: 10,
+                  borderRadius: 10,
+                  backgroundColor: pressed ? "#f3f4f6" : "transparent",
+                })}
+              >
+                <Text style={{ fontSize: 16 }}>Messenger</Text>
+              </Pressable>
+            ) : null}
+
+            {otherHref ? (
+              <Pressable
+                onPress={async () => {
+                  setContactOpen(false);
+                  await openLink(otherHref);
+                }}
+                style={({ pressed }) => ({
+                  paddingVertical: 12,
+                  paddingHorizontal: 10,
+                  borderRadius: 10,
+                  backgroundColor: pressed ? "#f3f4f6" : "transparent",
+                })}
+              >
+                <Text style={{ fontSize: 16 }}>Other contact</Text>
               </Pressable>
             ) : null}
 
