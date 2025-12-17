@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { useLanguage } from "../../context/LanguageContext";
 import { ImageBox, Badge, Field, statusKeyFrom } from "./_CardParts";
-// import { GET_MY_USER_INFO, GET_PRODUCTS_BY_MASTER } from "../../api/get";
 import { GET_MY_USER_INFO } from "../../api/get";
 import { UPDATE_PRODUCT } from "../../api/mutations";
 
@@ -103,9 +102,29 @@ export default function CardProduct(props) {
     return `https://wa.me/${digits}`;
   };
 
+  // const whatsappHref = normalizeWhatsapp(master?.whatsapp);
+  // const emailHref = master?.email ? `mailto:${master.email}` : null;
+  // const hasContacts = !!(whatsappHref || emailHref);
+
+  const normalizeLink = (value) => {
+    if (!value) return null;
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+
+    // если уже есть схема (https:, mailto:, tg:, etc) — оставляем как есть
+    if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed)) return trimmed;
+
+    // иначе считаем, что это домен/путь и добавляем https://
+    return `https://${trimmed.replace(/^\/+/, "")}`;
+  };
+
   const whatsappHref = normalizeWhatsapp(master?.whatsapp);
   const emailHref = master?.email ? `mailto:${master.email}` : null;
-  const hasContacts = !!(whatsappHref || emailHref);
+  const messengerHref = normalizeLink(master?.messenger);
+  const otherContactHref = normalizeLink(master?.otherContact);
+
+  const hasContacts = !!(whatsappHref || emailHref || messengerHref || otherContactHref);
+
   const [contactValue, setContactValue] = useState("");
 
   // Badge отражает текущий статус
@@ -396,12 +415,12 @@ export default function CardProduct(props) {
                 "Связаться с мастером"
               )}
             </option>
-            {whatsappHref && (
-              <option value={whatsappHref}> WhatsApp</option>
-            )}
-            {emailHref && (
-              <option value={emailHref}> Email</option>
-            )}
+
+            {whatsappHref && (<option value={whatsappHref}> WhatsApp</option>)}
+            {emailHref && (<option value={emailHref}> Email</option>)}
+            {messengerHref && <option value={messengerHref}> Messenger</option>}
+            {otherContactHref && <option value={otherContactHref}> Other contact</option>}
+            
           </select>
         </div>
       ) : null}

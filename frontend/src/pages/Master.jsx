@@ -142,6 +142,8 @@ export default function Master() {
                   href: `/masters/${master.documentId}`,
                   email: master.email,
                   whatsapp: master.whatsapp,
+                  otherContact: master.otherContact,
+                  messenger: master.messenger,
                 }}
               />
             ))}

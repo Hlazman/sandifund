@@ -156,6 +156,8 @@ export const GET_MASTERS = gql`
         state
       }
       whatsapp
+      otherContact
+      messenger
     }
   }
 `;
@@ -173,6 +175,8 @@ export const GET_PRODUCTS = gql`
         name
         email
         whatsapp
+        otherContact
+        messenger
       }
       price
       state
@@ -180,32 +184,6 @@ export const GET_PRODUCTS = gql`
     }
   }
 `;
-
-// export const GET_PRODUCTS_BY_MASTER = gql`
-//   query ProductsByMaster($pagination: PaginationArg, $masterId: ID!) {
-//     products(
-//       pagination: $pagination
-//       filters: { master: { documentId: { eq: $masterId } } }
-//     ) {
-//       documentId
-//       description
-//       donationPercent
-//       image { documentId url }
-//       locale
-//       master {
-//         documentId
-//         name
-//         email
-//         whatsapp
-//       }
-//       price
-//       sold
-//       state
-//       title
-//       user_info { documentId }
-//     }
-//   }
-// `;
 
 export const GET_ABOUT = gql`
   query About($locale: I18NLocaleCode) {
