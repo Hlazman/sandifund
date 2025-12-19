@@ -731,6 +731,10 @@ export interface ApiMasterMaster extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    user_info: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::user-info.user-info'
+    >;
     whatsapp: Schema.Attribute.String &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
@@ -1416,6 +1420,7 @@ export interface ApiUserInfoUserInfo extends Struct.CollectionTypeSchema {
       'api::user-info.user-info'
     > &
       Schema.Attribute.Private;
+    master: Schema.Attribute.Relation<'oneToOne', 'api::master.master'>;
     notifications: Schema.Attribute.Relation<
       'oneToMany',
       'api::notification.notification'
