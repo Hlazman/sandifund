@@ -88,6 +88,12 @@
           "localized": false
         }
       }
+    },
+    "user_info": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::user-info.user-info",
+      "inversedBy": "master"
     }
   }
 }
