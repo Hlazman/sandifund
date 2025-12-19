@@ -419,6 +419,7 @@ export default function CardProduct(props) {
             {whatsappHref && (<option value={whatsappHref}> WhatsApp</option>)}
             {emailHref && (<option value={emailHref}> Email</option>)}
             {messengerHref && <option value={messengerHref}> Messenger</option>}
+            {/* TODO */}
             {otherContactHref && <option value={otherContactHref}> Other contact</option>}
             
           </select>

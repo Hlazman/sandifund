@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from "react";
 import { useQuery } from "@apollo/client/react";
-// import { GET_MY_USER_INFO, GET_PRODUCTS_BY_MASTER } from "../api/get";
 import { GET_MY_USER_INFO, GET_MASTERS } from "../api/get";
 import CardProduct from "../components/cards/CardProduct";
 import { useLanguage } from "../context/LanguageContext";
@@ -10,12 +9,6 @@ export default function MyGoods() {
 
   const { data: uiData, loading: uiLoading } = useQuery(GET_MY_USER_INFO, { fetchPolicy: "cache-first" });
   const masterId = uiData?.meFull?.user_info?.master?.documentId || null;
-
-  // const { data, loading, error } = useQuery(GET_PRODUCTS_BY_MASTER, {
-  //   skip: !masterId,
-  //   variables: { pagination: { limit: 100 }, masterId },
-  //   fetchPolicy: "cache-and-network",
-  // });
 
   const { data, loading, error } = useQuery(GET_MASTERS, {
     skip: !masterId,
@@ -30,26 +23,6 @@ export default function MyGoods() {
   const [showSold, setShowSold] = useState(true);
   const [showInStock, setShowInStock] = useState(true);
   const [showNotValid, setShowNotValid] = useState(true);
-
-  // const items = useMemo(() => {
-  //   const all = data?.products || [];
-  //   return all
-  //     .filter((p) => {
-  //       if (p.state === "booked") return showBooked;
-  //       if (p.state === "sold") return showSold;
-  //       if (p.state === "inStock") return showInStock;
-  //       if (p.state === "notValid") return showNotValid;
-  //       return true;
-  //     })
-  //     .sort((a, b) => {
-  //       const rank = (s) =>
-  //         s === "booked" ? 0 :
-  //         s === "sold" ? 1 :
-  //         s === "notValid" ? 2 :
-  //         s === "inStock" ? 3 : 4;
-  //       return rank(a.state) - rank(b.state);
-  //     });
-  // }, [data, showBooked, showSold, showInStock, showNotValid]);
 
   const items = useMemo(() => {
     if (!masterId) return [];
@@ -96,7 +69,6 @@ export default function MyGoods() {
   }
 
   if (loading && !data) return <div className="max-w-6xl mx-auto p-4">{t("common.loading", "Loading…")}</div>;
-  // if (error) return <div className="max-w-6xl mx-auto p-4 text-red-600">{error.message}</div>;
 
   const isAbort =
     error?.name === "AbortError" ||

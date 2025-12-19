@@ -33,7 +33,6 @@ export const GET_MY_USER_INFO = gql`
         documentId
         language
         createdAt
-        products { documentId }
         master { documentId }
       }
     }
@@ -154,6 +153,7 @@ export const GET_MASTERS = gql`
         locale
         price
         state
+        master { documentId }
       }
       whatsapp
       otherContact
