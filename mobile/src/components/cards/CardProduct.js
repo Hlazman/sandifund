@@ -442,6 +442,7 @@ export default function CardProduct(props) {
                   backgroundColor: pressed ? "#f3f4f6" : "transparent",
                 })}
               >
+                {/* TODO */}
                 <Text style={{ fontSize: 16 }}>Other contact</Text>
               </Pressable>
             ) : null}
