@@ -896,6 +896,10 @@ export interface ApiPartnerPartner extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    user_info: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::user-info.user-info'
+    >;
   };
 }
 
@@ -1410,27 +1414,40 @@ export interface ApiUserInfoUserInfo extends Struct.CollectionTypeSchema {
         number
       > &
       Schema.Attribute.DefaultTo<0>;
+    entitlementKey: Schema.Attribute.String;
+    expiresAt: Schema.Attribute.DateTime;
     isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     isFree: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     isMaster: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     language: Schema.Attribute.Enumeration<['en', 'he', 'uk', 'ru']>;
+    lastPaidCurrency: Schema.Attribute.String;
+    lastPaidPrice: Schema.Attribute.Integer;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::user-info.user-info'
     > &
       Schema.Attribute.Private;
+    managementUrl: Schema.Attribute.String;
     master: Schema.Attribute.Relation<'oneToOne', 'api::master.master'>;
     notifications: Schema.Attribute.Relation<
       'oneToMany',
       'api::notification.notification'
     >;
+    partner: Schema.Attribute.Relation<'oneToOne', 'api::partner.partner'>;
+    platform: Schema.Attribute.Enumeration<['unknown', 'ios', 'android']> &
+      Schema.Attribute.DefaultTo<'unknown'>;
     publishedAt: Schema.Attribute.DateTime;
     selected_funds: Schema.Attribute.Relation<'oneToMany', 'api::fund.fund'>;
+    storeProductId: Schema.Attribute.String;
     subscriptions: Schema.Attribute.Relation<
       'oneToMany',
       'api::subscription.subscription'
     >;
+    subscriptionStatus: Schema.Attribute.Enumeration<
+      ['unknown', 'active', 'inactive', 'billing_issue', 'paused']
+    > &
+      Schema.Attribute.DefaultTo<'unknown'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1438,6 +1455,10 @@ export interface ApiUserInfoUserInfo extends Struct.CollectionTypeSchema {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
+    userType: Schema.Attribute.Enumeration<
+      ['basic', 'master', 'donor', 'free']
+    > &
+      Schema.Attribute.DefaultTo<'basic'>;
   };
 }
 

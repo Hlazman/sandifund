@@ -70,6 +70,60 @@
       "relation": "oneToOne",
       "target": "api::master.master",
       "mappedBy": "user_info"
+    },
+    "userType": {
+      "type": "enumeration",
+      "default": "basic",
+      "enum": [
+        "basic",
+        "master",
+        "donor",
+        "free"
+      ]
+    },
+    "partner": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::partner.partner",
+      "mappedBy": "user_info"
+    },
+    "subscriptionStatus": {
+      "type": "enumeration",
+      "default": "unknown",
+      "enum": [
+        "unknown",
+        "active",
+        "inactive",
+        "billing_issue",
+        "paused"
+      ]
+    },
+    "entitlementKey": {
+      "type": "string"
+    },
+    "storeProductId": {
+      "type": "string"
+    },
+    "expiresAt": {
+      "type": "datetime"
+    },
+    "platform": {
+      "type": "enumeration",
+      "default": "unknown",
+      "enum": [
+        "unknown",
+        "ios",
+        "android"
+      ]
+    },
+    "managementUrl": {
+      "type": "string"
+    },
+    "lastPaidPrice": {
+      "type": "integer"
+    },
+    "lastPaidCurrency": {
+      "type": "string"
     }
   }
 }
