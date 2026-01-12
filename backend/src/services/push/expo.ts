@@ -4,6 +4,12 @@ declare const strapi: any;
 
 const expo = new Expo();
 
+function maskToken(token: string): string {
+  if (!token) return "";
+  if (token.length <= 16) return token;
+  return `${token.slice(0, 10)}…${token.slice(-6)}`;
+}
+
 // Compress Slate-like JSON -> short plain text
 export function slateToText(value: unknown): string {
   try {
@@ -75,8 +81,32 @@ export async function sendToTokens(
     try {
       const receipts = await expo.sendPushNotificationsAsync(chunk);
 
-      // Optional: if receipts[i]?.details?.error === 'DeviceNotRegistered' -> delete token from DB
-      void receipts;
+      let okCount = 0;
+      let errorCount = 0;
+
+      for (let i = 0; i < receipts.length; i += 1) {
+        const r: any = receipts[i];
+        const to = (chunk[i] as any)?.to;
+
+        if (r?.status === "ok") {
+          okCount += 1;
+          continue;
+        }
+
+        errorCount += 1;
+        const expoError = r?.details?.error;
+        strapi?.log?.warn?.(
+          `[push:expo] receipt error: to=${maskToken(String(to || ""))} status=${String(
+            r?.status
+          )} message=${String(r?.message || "")} error=${String(expoError || "")}`
+        );
+
+        // If expoError === 'DeviceNotRegistered' -> token should be removed from DB (optional)
+      }
+
+      strapi?.log?.info?.(
+        `[push:expo] receipts: ok=${okCount} error=${errorCount} (chunkSize=${chunk.length})`
+      );
     } catch (e) {
       strapi?.log?.error?.("Expo push send error", e);
     }
