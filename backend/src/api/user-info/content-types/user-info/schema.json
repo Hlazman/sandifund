@@ -124,6 +124,9 @@
     },
     "lastPaidCurrency": {
       "type": "string"
+    },
+    "pushTokens": {
+      "type": "json"
     }
   }
 }

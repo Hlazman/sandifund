@@ -1438,6 +1438,7 @@ export interface ApiUserInfoUserInfo extends Struct.CollectionTypeSchema {
     platform: Schema.Attribute.Enumeration<['unknown', 'ios', 'android']> &
       Schema.Attribute.DefaultTo<'unknown'>;
     publishedAt: Schema.Attribute.DateTime;
+    pushTokens: Schema.Attribute.JSON;
     selected_funds: Schema.Attribute.Relation<'oneToMany', 'api::fund.fund'>;
     storeProductId: Schema.Attribute.String;
     subscriptions: Schema.Attribute.Relation<
