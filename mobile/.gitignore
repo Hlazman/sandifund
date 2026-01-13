@@ -21,3 +21,6 @@ ios/
 .metro-health-check*
 
 sandifund-upload-keystore.jks
+
+*-firebase-adminsdk-*.json
+fcm-service-account.json

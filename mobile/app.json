@@ -17,7 +17,8 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.sandifund.app"
+      "package": "com.sandifund.app",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -6,14 +6,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ApolloProvider } from "@apollo/client/react";
 import client from "./src/api/apolloClient";
 import { Platform, View, Text } from "react-native";
-
 import { AuthProvider, useAuth } from "./src/context/AuthContext";
 import { LanguageProvider } from "./src/context/LanguageContext";
-
 import Header from "./src/components/Header";
 import Footer from "./src/components/Footer";
-
-// авторизованные
 import Sticers from "./src/screens/Sticers";
 import Payment from "./src/screens/Payment";
 import Profile from "./src/screens/Profile";
@@ -34,6 +30,15 @@ import Reports from "./src/screens/Reports";
 import Master from "./src/screens/Master";
 import About from "./src/screens/About";
 import Partners from "./src/screens/Partners";
+import * as Notifications from "expo-notifications";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
 const Stack = createNativeStackNavigator();
 

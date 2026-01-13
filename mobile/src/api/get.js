@@ -16,6 +16,7 @@ export const GET_MY_USER_INFO = gql`
       user_info {
         documentId
         language
+        pushTokens
         master { documentId }
       }
     }

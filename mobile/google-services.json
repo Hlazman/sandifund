@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "834918340494",
+    "project_id": "sandifund",
+    "storage_bucket": "sandifund.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:834918340494:android:affbab6a5aed01af95b6df",
+        "android_client_info": {
+          "package_name": "com.sandifund.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBM0qeLGHCoC0wy83YvZcgsByPxn_T5M6U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

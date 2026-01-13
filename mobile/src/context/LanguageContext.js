@@ -5,6 +5,7 @@ import { I18nManager, Platform } from "react-native";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client/react";
 import { GET_TRANSLATIONS, GET_MY_USER_INFO } from "../api/get";
 import { UPDATE_USER_INFO } from "../api/mutations";
+import { registerForPushTokenAsync } from "../utils/push";
 
 const LANGS = [
   { code: "en", label: "English", dir: "ltr" },
@@ -49,13 +50,57 @@ export function LanguageProvider({ children }) {
   const [fetchMyUserInfo] = useLazyQuery(GET_MY_USER_INFO, { fetchPolicy: "network-only" });
   const [updateUserInfo] = useMutation(UPDATE_USER_INFO);
 
+  // Mobile push notification funktion
+  const syncPushTokenOnce = useCallback(
+    async (userInfoId, serverPushTokens) => {
+      if (!userInfoId) return;
+
+      // чтобы не пытаться синкать по 10 раз за сессию
+      if (globalThis.__pushSyncedFor === userInfoId) return;
+
+      try {
+        const token = await registerForPushTokenAsync();
+        if (!token) return;
+
+        const arr = Array.isArray(serverPushTokens) ? serverPushTokens : [];
+
+        // токен уже есть — помечаем как synced и выходим
+        if (arr.includes(token)) {
+          globalThis.__pushSyncedFor = userInfoId;
+          return;
+        }
+
+        const next = [...arr, token];
+
+        await updateUserInfo({
+          variables: {
+            documentId: userInfoId,
+            data: { pushTokens: next },
+          },
+        });
+
+        globalThis.__pushSyncedFor = userInfoId;
+      } catch (e) {
+        // пуши не должны ломать приложение
+        console.log("syncPushTokenOnce error:", e?.message || e);
+      }
+    },
+    [updateUserInfo]
+  );
+
   // bootstrap читает meFull.user_info и синхронизирует язык
   const bootstrap = useCallback(async () => {
     if (!globalThis.sf_jwt) return;
     try {
       const res = await fetchMyUserInfo();
       const ui = res?.data?.meFull?.user_info || null;
-      if (ui?.documentId) globalThis.sf_userInfoId = ui.documentId;
+      
+      // if (ui?.documentId) globalThis.sf_userInfoId = ui.documentId;
+      if (ui?.documentId) {
+        globalThis.sf_userInfoId = ui.documentId;
+        await syncPushTokenOnce(ui.documentId, ui?.pushTokens);
+      }
+      
       if (ui?.language && ui.language !== locale) {
         setLocaleState(ui.language);
         globalThis.sf_lang = ui.language;
