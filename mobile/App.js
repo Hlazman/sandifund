@@ -122,9 +122,61 @@ function UnauthedStack() {
   );
 }
 
+// function RootNav() {
+//   const { isAuthed, ready } = useAuth();
+//   if (!ready) return null;
+
+//   // сохраняем состояние навигации только на web
+//   const navKey = React.useMemo(
+//     () => (isAuthed ? "sf_nav_state_authed" : "sf_nav_state_unauthed"),
+//     [isAuthed]
+//   );
+
+//   const [initialState, setInitialState] = React.useState();
+//   const [isReady, setIsReady] = React.useState(false);
+
+//   React.useEffect(() => {
+//     let mounted = true;
+//     (async () => {
+//       try {
+//         let useSavedState = true;
+//         if (Platform.OS === "web") {
+//           const path = window.location.pathname || "/";
+//           if (path && path !== "/") useSavedState = false; // если явный URL — доверяем ему
+//         }
+
+//         if (Platform.OS === "web" && useSavedState) {
+//           try {
+//             const json = localStorage.getItem(navKey);
+//             if (mounted && json) setInitialState(JSON.parse(json));
+//           } catch {}
+//         }
+//       } finally {
+//         if (mounted) setIsReady(true);
+//       }
+//     })();
+//     return () => { mounted = false; };
+//   }, [navKey]);
+
+//   if (!isReady) return null;
+
+//   return (
+//     <NavigationContainer
+//       linking={linking}
+//       initialState={initialState}
+//       onStateChange={(state) => {
+//         if (Platform.OS === "web") {
+//           try { localStorage.setItem(navKey, JSON.stringify(state)); } catch {}
+//         }
+//       }}
+//     >
+//       {isAuthed ? <AuthedStack /> : <UnauthedStack />}
+//     </NavigationContainer>
+//   );
+// }
+
 function RootNav() {
   const { isAuthed, ready } = useAuth();
-  if (!ready) return null;
 
   // сохраняем состояние навигации только на web
   const navKey = React.useMemo(
@@ -133,13 +185,24 @@ function RootNav() {
   );
 
   const [initialState, setInitialState] = React.useState();
-  const [isReady, setIsReady] = React.useState(false);
+  const [isNavStateReady, setIsNavStateReady] = React.useState(false);
 
   React.useEffect(() => {
     let mounted = true;
+
+    // Пока AuthProvider ещё не готов (ready=false) — не читаем/не пишем nav state
+    if (!ready) {
+      setIsNavStateReady(false);
+      setInitialState(undefined);
+      return () => {
+        mounted = false;
+      };
+    }
+
     (async () => {
       try {
         let useSavedState = true;
+
         if (Platform.OS === "web") {
           const path = window.location.pathname || "/";
           if (path && path !== "/") useSavedState = false; // если явный URL — доверяем ему
@@ -152,13 +215,18 @@ function RootNav() {
           } catch {}
         }
       } finally {
-        if (mounted) setIsReady(true);
+        if (mounted) setIsNavStateReady(true);
       }
     })();
-    return () => { mounted = false; };
-  }, [navKey]);
 
-  if (!isReady) return null;
+    return () => {
+      mounted = false;
+    };
+  }, [navKey, ready]);
+
+  // ВАЖНО: return только после хуков
+  if (!ready) return null;
+  if (!isNavStateReady) return null;
 
   return (
     <NavigationContainer
@@ -166,7 +234,9 @@ function RootNav() {
       initialState={initialState}
       onStateChange={(state) => {
         if (Platform.OS === "web") {
-          try { localStorage.setItem(navKey, JSON.stringify(state)); } catch {}
+          try {
+            localStorage.setItem(navKey, JSON.stringify(state));
+          } catch {}
         }
       }}
     >

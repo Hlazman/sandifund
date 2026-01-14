@@ -5,6 +5,7 @@ import { I18nManager, Platform } from "react-native";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client/react";
 import { GET_TRANSLATIONS, GET_MY_USER_INFO } from "../api/get";
 import { UPDATE_USER_INFO } from "../api/mutations";
+import { useAuth } from "./AuthContext";
 import { registerForPushTokenAsync } from "../utils/push";
 
 const LANGS = [
@@ -27,6 +28,7 @@ function pick(obj, path) {
 }
 
 export function LanguageProvider({ children }) {
+  const { jwt, ready: authReady } = useAuth();
   // начальный язык — синхронно из localStorage на web (native: "en")
   const [locale, setLocaleState] = useState(() => {
     let initial = "en";
@@ -88,19 +90,41 @@ export function LanguageProvider({ children }) {
     [updateUserInfo]
   );
 
+  // const bootstrap = useCallback(async () => {
+  //   if (!globalThis.sf_jwt) return;
+  //   try {
+  //     const res = await fetchMyUserInfo();
+  //     const ui = res?.data?.meFull?.user_info || null;
+      
+  //     // if (ui?.documentId) globalThis.sf_userInfoId = ui.documentId;
+  //     if (ui?.documentId) {
+  //       globalThis.sf_userInfoId = ui.documentId;
+  //       await syncPushTokenOnce(ui.documentId, ui?.pushTokens);
+  //     }
+      
+  //     if (ui?.language && ui.language !== locale) {
+  //       setLocaleState(ui.language);
+  //       globalThis.sf_lang = ui.language;
+  //       if (Platform.OS === "web") {
+  //         try { localStorage.setItem(LANG_KEY, ui.language); } catch {}
+  //       }
+  //     }
+  //   } catch {}
+  // }, [fetchMyUserInfo, locale]);
+
   // bootstrap читает meFull.user_info и синхронизирует язык
   const bootstrap = useCallback(async () => {
-    if (!globalThis.sf_jwt) return;
+    if (!authReady || !jwt) return;
+
     try {
       const res = await fetchMyUserInfo();
       const ui = res?.data?.meFull?.user_info || null;
-      
-      // if (ui?.documentId) globalThis.sf_userInfoId = ui.documentId;
+
       if (ui?.documentId) {
         globalThis.sf_userInfoId = ui.documentId;
         await syncPushTokenOnce(ui.documentId, ui?.pushTokens);
       }
-      
+
       if (ui?.language && ui.language !== locale) {
         setLocaleState(ui.language);
         globalThis.sf_lang = ui.language;
@@ -109,7 +133,8 @@ export function LanguageProvider({ children }) {
         }
       }
     } catch {}
-  }, [fetchMyUserInfo, locale]);
+  }, [authReady, jwt, fetchMyUserInfo, locale, syncPushTokenOnce]);
+
 
   // автозапуск bootstrap
   useEffect(() => { bootstrap().catch(() => {}); }, [bootstrap]);

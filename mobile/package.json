@@ -33,7 +33,8 @@
     "react-native-web": "^0.21.0",
     "expo-notifications": "~0.32.16",
     "expo-device": "~8.0.10",
-    "expo-constants": "~18.0.13"
+    "expo-constants": "~18.0.13",
+    "expo-secure-store": "~15.0.8"
   },
   "private": true,
   "devDependencies": {
